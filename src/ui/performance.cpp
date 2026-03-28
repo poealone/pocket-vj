@@ -17,6 +17,28 @@ void PerformanceMode::init(LayerManager* layers, SceneManager* scenes,
     overlayVisible = true;
 
     autoAssignFX(*layers);
+
+    // If no FX found, create defaults
+    bool hasFX = false;
+    for (int i = 0; i < 3; i++) {
+        if (m_fxSlots[i] >= 0) { hasFX = true; break; }
+    }
+    if (!hasFX) {
+        // Find an empty layer or use the last one
+        int fxLayer = -1;
+        for (int i = 0; i < layers->layerCount(); i++) {
+            if (layers->layer(i).nodes.empty()) { fxLayer = i; break; }
+        }
+        if (fxLayer < 0) fxLayer = layers->layerCount() - 1;
+        layers->setCurrentLayer(fxLayer);
+        layers->layer(fxLayer).name = "Perf FX";
+
+        layers->addNode(new BlurNode());
+        layers->addNode(new GlitchNode());
+        layers->addNode(new FeedbackNode());
+
+        autoAssignFX(*layers);
+    }
 }
 
 void PerformanceMode::autoAssignFX(LayerManager& layers) {

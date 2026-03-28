@@ -199,6 +199,15 @@ void Renderer::endFrame() {
     SDL_RenderPresent(m_renderer);
     m_frameCount++;
 
+    // FPS calculation (update every 0.5 seconds)
+    m_fpsAccum += m_dt;
+    m_fpsFrames++;
+    if (m_fpsAccum >= 0.5f) {
+        m_fps = (float)m_fpsFrames / m_fpsAccum;
+        m_fpsAccum = 0.0f;
+        m_fpsFrames = 0;
+    }
+
     // Strict frame rate limiting
     uint32_t frameTime = SDL_GetTicks() - m_frameStart;
     uint32_t targetTime = 1000 / TARGET_FPS;

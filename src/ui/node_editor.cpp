@@ -3,9 +3,11 @@
 #include <cstdio>
 #include <algorithm>
 
-void NodeEditor::open(VisualNode* node) {
+void NodeEditor::open(VisualNode* node, LayerManager* layers) {
     m_node = node;
+    m_layers = layers;
     m_open = true;
+    m_deleteRequested = false;
     m_cursor = 0;
     m_scrollOffset = 0;
     if (m_node) {
@@ -72,15 +74,28 @@ bool NodeEditor::update(Input& input) {
             m_node->applyParams();
         }
 
-        // L/R shoulder: big jump (10x step)
-        if (input.pressed(Button::L)) {
-            p.adjust(-p.step * 10.0f);
-            m_node->applyParams();
+    }
+
+    // L/R: switch to prev/next node in current layer
+    if (m_layers && (input.pressed(Button::L) || input.pressed(Button::R))) {
+        auto& nodes = m_layers->currentNodes();
+        if (nodes.size() > 1) {
+            int idx = -1;
+            for (int i = 0; i < (int)nodes.size(); i++) {
+                if (nodes[i] == m_node) { idx = i; break; }
+            }
+            if (idx >= 0) {
+                if (input.pressed(Button::R)) idx = (idx + 1) % (int)nodes.size();
+                else idx = (idx - 1 + (int)nodes.size()) % (int)nodes.size();
+                open(nodes[idx], m_layers);
+            }
         }
-        if (input.pressed(Button::R)) {
-            p.adjust(p.step * 10.0f);
-            m_node->applyParams();
-        }
+    }
+
+    // X = delete current node
+    if (input.pressed(Button::X)) {
+        m_deleteRequested = true;
+        return true;
     }
 
     // B = back
@@ -177,5 +192,5 @@ void NodeEditor::render(Renderer& r, const std::vector<VisualNode*>& nodes) {
 
     // Help bar
     r.rect(0, RENDER_H - 9, RENDER_W, 9, {10, 10, 16}, true);
-    r.text(4, RENDER_H - 8, "<>:ADJ  A+<>:FINE  L/R:JUMP  B:BACK", {100, 100, 110});
+    r.text(4, RENDER_H - 8, "L/R:NODE <>:ADJ A+<>:FINE X:DEL B:BACK", {100, 100, 110});
 }

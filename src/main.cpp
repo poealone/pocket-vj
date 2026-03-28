@@ -306,7 +306,13 @@ int main(int argc, char* argv[]) {
                         sceneMenuOpen = true;
                         sceneMenuCursor = sceneManager.currentScene();
                         break;
-                    case 8: // EXIT (was 5, now 8)
+                    case 6: // SETTINGS
+                        // TODO: settings menu
+                        break;
+                    case 7: // ABOUT
+                        // TODO: about screen
+                        break;
+                    case 8: // EXIT
                         running = false;
                         break;
                     default:
@@ -389,7 +395,7 @@ int main(int argc, char* argv[]) {
                         layers.setCurrentLayer(enterLayer);
                         auto& nodes = layers.layer(enterLayer).nodes;
                         if (!nodes.empty()) {
-                            nodeEditor.open(nodes[0]);
+                            nodeEditor.open(nodes[0], &layers);
                             mode = AppMode::NODE_EDITOR;
                         } else {
                             // No nodes — open node browser to add one
@@ -406,9 +412,17 @@ int main(int argc, char* argv[]) {
 
                 case AppMode::NODE_EDITOR: {
                     bool back = nodeEditor.update(input);
-                    if (back) {
+                    if (nodeEditor.deleteRequested()) {
+                        VisualNode* toDelete = nodeEditor.currentNode();
                         nodeEditor.close();
-                        // Go back to layer editor
+                        if (toDelete) {
+                            layers.removeNode(toDelete);
+                            delete toDelete;
+                        }
+                        layerEditor.open(&layers);
+                        mode = AppMode::LAYER_EDITOR;
+                    } else if (back) {
+                        nodeEditor.close();
                         layerEditor.open(&layers);
                         mode = AppMode::LAYER_EDITOR;
                     }
@@ -636,12 +650,12 @@ int main(int argc, char* argv[]) {
 
                 // Status bar
                 snprintf(statusBuf, sizeof(statusBuf),
-                    "BPM:%3.0f  LYR:%d/%s  %s  FRM:%d",
+                    "BPM:%3.0f  LYR:%d/%s  %s  %.0fFPS",
                     pattern.bpm(),
                     layers.currentLayer() + 1,
                     layers.layer(layers.currentLayer()).name.c_str(),
                     pattern.isPlaying() ? "PLAY" : "STOP",
-                    renderer.frameCount()
+                    renderer.fps()
                 );
                 renderer.rect(0, RENDER_H - 10, RENDER_W, 10, {10, 10, 16}, true);
                 renderer.text(2, RENDER_H - 9, statusBuf, Palette::UI_FG);

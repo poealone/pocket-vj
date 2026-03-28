@@ -6,6 +6,9 @@
 #include "../engine/recorder.h"
 #include "../engine/visual_node.h"
 #include "../engine/nodes/particles.h"
+#include "../engine/nodes/blur.h"
+#include "../engine/nodes/glitch.h"
+#include "../engine/nodes/feedback.h"
 #include "../input.h"
 #include "../sequencer/pattern.h"
 #include <string>

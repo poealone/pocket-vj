@@ -21,7 +21,10 @@ void Menu::render(Renderer& r) {
     if (!m_open) return;
 
     // Semi-transparent overlay
-    int mx = 60, my = 40, mw = 200, mh = 160;
+    int mw = 200;
+    int mh = 34 + (int)items.size() * 14 + 20;
+    int mx = (RENDER_W - mw) / 2;
+    int my = (RENDER_H - mh) / 2;
     r.rect(mx, my, mw, mh, {10, 10, 16}, true);
     r.rect(mx, my, mw, mh, Palette::UI_FG, false);
 
