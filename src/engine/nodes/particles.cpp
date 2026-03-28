@@ -115,6 +115,15 @@ void ParticlesNode::update(float dt, float audioLevel) {
     }
 }
 
+void ParticlesNode::setSpriteFile(const std::string& path) {
+    spriteFile = path;
+    if (!path.empty()) {
+        m_sprite = SpriteCache::instance().load(path);
+    } else {
+        m_sprite = nullptr;
+    }
+}
+
 void ParticlesNode::render(Renderer& r) {
     if (!active) return;
 
@@ -123,14 +132,25 @@ void ParticlesNode::render(Renderer& r) {
         if (!p.alive) continue;
 
         float alpha = (float)p.color.a / 255.0f;
-        Color c = p.color;
-        c.r = (uint8_t)(c.r * alpha);
-        c.g = (uint8_t)(c.g * alpha);
-        c.b = (uint8_t)(c.b * alpha);
 
-        r.pixel((int)p.x, (int)p.y, c);
-        r.pixel((int)p.x + 1, (int)p.y, c);
-        r.pixel((int)p.x, (int)p.y + 1, c);
-        r.pixel((int)p.x + 1, (int)p.y + 1, c);
+        if (m_sprite) {
+            // Render custom sprite at particle position
+            float lifeRatio = 1.0f - (p.life / p.maxLife);
+            float scale = 0.5f + lifeRatio * 0.5f; // Scale down as particle dies
+            m_sprite->draw(r.pixels(), RENDER_W, RENDER_H,
+                          (int)p.x, (int)p.y, scale,
+                          p.color.r, p.color.g, p.color.b, alpha);
+        } else {
+            // Default 2x2 pixel rendering
+            Color c = p.color;
+            c.r = (uint8_t)(c.r * alpha);
+            c.g = (uint8_t)(c.g * alpha);
+            c.b = (uint8_t)(c.b * alpha);
+
+            r.pixel((int)p.x, (int)p.y, c);
+            r.pixel((int)p.x + 1, (int)p.y, c);
+            r.pixel((int)p.x, (int)p.y + 1, c);
+            r.pixel((int)p.x + 1, (int)p.y + 1, c);
+        }
     }
 }

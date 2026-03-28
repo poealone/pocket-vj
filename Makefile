@@ -13,6 +13,8 @@ SOURCES = \
 	src/engine/renderer.cpp \
 	src/engine/visual_node.cpp \
 	src/engine/param.cpp \
+	src/engine/layer.cpp \
+	src/engine/sprite.cpp \
 	src/engine/nodes/bars.cpp \
 	src/engine/nodes/waveform.cpp \
 	src/engine/nodes/shapes.cpp \
@@ -26,6 +28,13 @@ SOURCES = \
 	src/engine/nodes/starfield.cpp \
 	src/engine/nodes/plasma.cpp \
 	src/engine/nodes/mirror.cpp \
+	src/engine/nodes/blur.cpp \
+	src/engine/nodes/feedback.cpp \
+	src/engine/nodes/glitch.cpp \
+	src/engine/nodes/scanline.cpp \
+	src/engine/nodes/pixelate.cpp \
+	src/engine/nodes/colorshift.cpp \
+	src/engine/nodes/edge.cpp \
 	src/engine/audio/fft.cpp \
 	src/engine/audio/audio_input.cpp \
 	src/engine/modulators/lfo.cpp \
@@ -37,7 +46,9 @@ SOURCES = \
 	src/ui/menu.cpp \
 	src/ui/widgets.cpp \
 	src/ui/node_editor.cpp \
-	src/ui/node_browser.cpp
+	src/ui/node_browser.cpp \
+	src/ui/layer_editor.cpp \
+	src/ui/file_browser.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 TARGET = pocket-vj

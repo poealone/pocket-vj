@@ -2,6 +2,8 @@
 #include "input.h"
 #include "engine/renderer.h"
 #include "engine/visual_node.h"
+#include "engine/layer.h"
+#include "engine/sprite.h"
 #include "engine/nodes/bars.h"
 #include "engine/nodes/waveform.h"
 #include "engine/nodes/shapes.h"
@@ -15,6 +17,13 @@
 #include "engine/nodes/starfield.h"
 #include "engine/nodes/plasma.h"
 #include "engine/nodes/mirror.h"
+#include "engine/nodes/blur.h"
+#include "engine/nodes/feedback.h"
+#include "engine/nodes/glitch.h"
+#include "engine/nodes/scanline.h"
+#include "engine/nodes/pixelate.h"
+#include "engine/nodes/colorshift.h"
+#include "engine/nodes/edge.h"
 #include "engine/audio/fft.h"
 #include "engine/audio/audio_input.h"
 #include "engine/modulators/lfo.h"
@@ -26,6 +35,8 @@
 #include "ui/menu.h"
 #include "ui/node_editor.h"
 #include "ui/node_browser.h"
+#include "ui/layer_editor.h"
+#include "ui/file_browser.h"
 #include "preset.h"
 
 #include <vector>
@@ -33,12 +44,14 @@
 #include <sys/stat.h>
 
 enum class AppMode {
-    TRACKER,       // Main tracker view + small preview
-    PREVIEW,       // Fullscreen visual preview
-    NODE_EDITOR,   // Parameter editing for selected node
-    NODE_BROWSER,  // Add new node browser
-    PRESET_BROWSER,// Save/load presets
-    PERFORMANCE    // Live FX mode (Phase 5)
+    TRACKER,        // Main tracker view + small preview
+    PREVIEW,        // Fullscreen visual preview
+    NODE_EDITOR,    // Parameter editing for selected node
+    NODE_BROWSER,   // Add new node browser
+    PRESET_BROWSER, // Save/load presets
+    LAYER_EDITOR,   // Layer management
+    FILE_BROWSER,   // File browser for sprites/assets
+    PERFORMANCE     // Live FX mode (Phase 5)
 };
 
 // Presets directory path
@@ -64,9 +77,16 @@ static VisualNode* createNode(int typeId) {
         case 10: return new StarfieldNode();
         case 11: return new PlasmaNode();
         case 12: return new MirrorNode();
-        case 13: return new LFOModulator();
-        case 14: return new EnvelopeModulator();
-        case 15: return new AudioModulator();
+        case 13: return new BlurNode();
+        case 14: return new FeedbackNode();
+        case 15: return new GlitchNode();
+        case 16: return new ScanlineNode();
+        case 17: return new PixelateNode();
+        case 18: return new ColorShiftNode();
+        case 19: return new EdgeNode();
+        case 20: return new LFOModulator();
+        case 21: return new EnvelopeModulator();
+        case 22: return new AudioModulator();
         default: return nullptr;
     }
 }
@@ -97,64 +117,66 @@ int main(int argc, char* argv[]) {
 
     ensurePresetsDir();
 
-    // --- Create visual nodes ---
-    ColorFieldNode bgField;
-    bgField.fieldType = FieldType::GRADIENT_V;
+    // --- Layer Manager ---
+    LayerManager layers;
 
-    BarsNode bars;
-    bars.x = 0; bars.y = 180; bars.w = RENDER_W; bars.h = 60;
-    bars.numBars = 16;
-    bars.color = Palette::RED;
-    bars.reactive = false;
+    // --- Create default nodes in Layer 1 ---
+    layers.setCurrentLayer(0);
+    layers.layer(0).name = "Background";
 
-    WaveformNode wave;
-    wave.x = 0; wave.y = 80; wave.w = RENDER_W; wave.h = 80;
-    wave.color = Palette::CYAN;
-    wave.reactive = false;
+    ColorFieldNode* bgField = new ColorFieldNode();
+    bgField->fieldType = FieldType::GRADIENT_V;
+    bgField->syncParams();
+    layers.addNode(bgField);
 
-    ShapesNode shape;
-    shape.x = RENDER_W / 2 - 30; shape.y = 30;
-    shape.w = 60; shape.h = 60;
-    shape.shape = ShapeType::CIRCLE;
-    shape.color = Palette::MAGENTA;
+    // Layer 2: bars + wave
+    layers.setCurrentLayer(1);
+    layers.layer(1).name = "Audio Viz";
 
-    ParticlesNode particles;
-    particles.x = RENDER_W / 2;
-    particles.y = 120;
-    particles.color = Palette::YELLOW;
-    particles.reactive = false;
+    BarsNode* bars = new BarsNode();
+    bars->x = 0; bars->y = 180; bars->w = RENDER_W; bars->h = 60;
+    bars->numBars = 16;
+    bars->color = Palette::RED;
+    bars->reactive = false;
+    bars->syncParams();
+    layers.addNode(bars);
 
-    // Sync initial state to params
-    bgField.syncParams();
-    bars.syncParams();
-    wave.syncParams();
-    shape.syncParams();
-    particles.syncParams();
+    WaveformNode* wave = new WaveformNode();
+    wave->x = 0; wave->y = 80; wave->w = RENDER_W; wave->h = 80;
+    wave->color = Palette::CYAN;
+    wave->reactive = false;
+    wave->syncParams();
+    layers.addNode(wave);
 
-    // Node list (render order = layer order)
-    // We use a vector of owned pointers for dynamic add/remove
-    std::vector<VisualNode*> nodes;
-    nodes.push_back(&bgField);
-    nodes.push_back(&bars);
-    nodes.push_back(&wave);
-    nodes.push_back(&shape);
-    nodes.push_back(&particles);
+    // Layer 3: shapes + particles
+    layers.setCurrentLayer(2);
+    layers.layer(2).name = "Elements";
 
-    // Track which nodes are heap-allocated (for cleanup)
-    // The initial 5 are stack-allocated, dynamically added ones are heap
-    int staticNodeCount = (int)nodes.size();
+    ShapesNode* shape = new ShapesNode();
+    shape->x = RENDER_W / 2 - 30; shape->y = 30;
+    shape->w = 60; shape->h = 60;
+    shape->shape = ShapeType::CIRCLE;
+    shape->color = Palette::MAGENTA;
+    shape->syncParams();
+    layers.addNode(shape);
 
-    int activeNode = 1;
+    ParticlesNode* particles = new ParticlesNode();
+    particles->x = RENDER_W / 2;
+    particles->y = 120;
+    particles->color = Palette::YELLOW;
+    particles->reactive = false;
+    particles->syncParams();
+    layers.addNode(particles);
+
+    // Reset to layer 1
+    layers.setCurrentLayer(0);
+
+    // Get flat node list for compatibility
+    auto allNodes = layers.allNodes();
 
     // --- Sequencer ---
     Pattern pattern(16);
     pattern.setBpm(120.0f);
-
-    pattern.setStep(0,  1, "color_r", 255);
-    pattern.setStep(4,  1, "color_r", 60);
-    pattern.setStep(4,  1, "color_b", 255);
-    pattern.setStep(8,  1, "color_r", 255);
-    pattern.setStep(12, 3, "shape", 1);
 
     // --- UI ---
     TrackerView tracker;
@@ -163,6 +185,8 @@ int main(int argc, char* argv[]) {
     NodeEditor nodeEditor;
     NodeBrowser nodeBrowser;
     PresetBrowser presetBrowser;
+    LayerEditor layerEditor;
+    FileBrowser fileBrowser;
     AppMode mode = AppMode::TRACKER;
 
     char statusBuf[128];
@@ -180,10 +204,13 @@ int main(int argc, char* argv[]) {
         if (!fft.hasAudioInput()) {
             fft.generateDemo(dt);
         }
-        bars.setFFTData(fft.bins(), fft.binCount());
+        bars->setFFTData(fft.bins(), fft.binCount());
+
+        // Refresh flat node list (in case nodes were added/removed)
+        allNodes = layers.allNodes();
 
         // --- Feed audio modulators ---
-        for (auto* node : nodes) {
+        for (auto* node : allNodes) {
             AudioModulator* amod = dynamic_cast<AudioModulator*>(node);
             if (amod && amod->active) {
                 amod->feed(fft);
@@ -223,26 +250,28 @@ int main(int argc, char* argv[]) {
                     if (input.pressed(Button::START)) {
                         pattern.togglePlaying();
                     }
-                    // L/R → switch active node
+                    // L/R → switch active layer
                     if (input.pressed(Button::L)) {
-                        activeNode = (activeNode - 1 + (int)nodes.size()) % (int)nodes.size();
+                        int cur = layers.currentLayer();
+                        cur = (cur - 1 + layers.layerCount()) % layers.layerCount();
+                        layers.setCurrentLayer(cur);
                     }
                     if (input.pressed(Button::R)) {
-                        activeNode = (activeNode + 1) % (int)nodes.size();
+                        int cur = layers.currentLayer();
+                        cur = (cur + 1) % layers.layerCount();
+                        layers.setCurrentLayer(cur);
                     }
                     // Y → fullscreen preview
                     if (input.pressed(Button::Y)) {
                         mode = AppMode::PREVIEW;
                         preview.fullscreen = true;
                     }
-                    // A → enter node editor for selected node
+                    // A → open layer editor
                     if (input.pressed(Button::A)) {
-                        if (activeNode >= 0 && activeNode < (int)nodes.size()) {
-                            nodeEditor.open(nodes[activeNode]);
-                            mode = AppMode::NODE_EDITOR;
-                        }
+                        layerEditor.open(&layers);
+                        mode = AppMode::LAYER_EDITOR;
                     }
-                    // X → open node browser
+                    // X → open node browser (adds to current layer)
                     if (input.pressed(Button::X)) {
                         nodeBrowser.open();
                         mode = AppMode::NODE_BROWSER;
@@ -261,11 +290,36 @@ int main(int argc, char* argv[]) {
                     }
                     break;
 
+                case AppMode::LAYER_EDITOR: {
+                    int enterLayer = -1;
+                    bool back = layerEditor.update(input, enterLayer);
+                    if (enterLayer >= 0) {
+                        // Enter node editor for first node in that layer
+                        layers.setCurrentLayer(enterLayer);
+                        auto& nodes = layers.layer(enterLayer).nodes;
+                        if (!nodes.empty()) {
+                            nodeEditor.open(nodes[0]);
+                            mode = AppMode::NODE_EDITOR;
+                        } else {
+                            // No nodes — open node browser to add one
+                            nodeBrowser.open();
+                            mode = AppMode::NODE_BROWSER;
+                        }
+                        layerEditor.close();
+                    }
+                    if (back) {
+                        mode = AppMode::TRACKER;
+                    }
+                    break;
+                }
+
                 case AppMode::NODE_EDITOR: {
                     bool back = nodeEditor.update(input);
                     if (back) {
                         nodeEditor.close();
-                        mode = AppMode::TRACKER;
+                        // Go back to layer editor
+                        layerEditor.open(&layers);
+                        mode = AppMode::LAYER_EDITOR;
                     }
                     break;
                 }
@@ -273,11 +327,10 @@ int main(int argc, char* argv[]) {
                 case AppMode::NODE_BROWSER: {
                     int typeId = nodeBrowser.update(input);
                     if (typeId >= 0) {
-                        // Create and add new node
+                        // Create and add new node to current layer
                         VisualNode* newNode = createNode(typeId);
                         if (newNode) {
-                            nodes.push_back(newNode);
-                            activeNode = (int)nodes.size() - 1;
+                            layers.addNode(newNode);
                         }
                         mode = AppMode::TRACKER;
                     } else if (nodeBrowser.cancelled()) {
@@ -290,28 +343,37 @@ int main(int argc, char* argv[]) {
                     std::string result = presetBrowser.update(input);
                     if (!result.empty()) {
                         if (presetBrowser.isSaving()) {
-                            // Extract name from path
                             std::string name = result;
                             size_t slash = name.rfind('/');
                             if (slash != std::string::npos) name = name.substr(slash + 1);
                             size_t dot = name.rfind('.');
                             if (dot != std::string::npos) name = name.substr(0, dot);
-                            Preset::save(result, name, pattern.bpm(), nodes);
+                            Preset::save(result, name, pattern.bpm(), allNodes);
                         } else {
-                            // Load preset
                             Preset::PresetData data = Preset::load(result);
                             if (data.valid) {
                                 pattern.setBpm(data.bpm);
-                                // Apply loaded params to matching nodes
-                                for (int i = 0; i < (int)data.nodes.size() && i < (int)nodes.size(); i++) {
+                                for (int i = 0; i < (int)data.nodes.size() && i < (int)allNodes.size(); i++) {
                                     for (auto& [pname, pval] : data.nodes[i].params) {
-                                        nodes[i]->setParam(pname, pval);
+                                        allNodes[i]->setParam(pname, pval);
                                     }
                                 }
                             }
                         }
                         mode = AppMode::TRACKER;
                     } else if (presetBrowser.cancelled()) {
+                        mode = AppMode::TRACKER;
+                    }
+                    break;
+                }
+
+                case AppMode::FILE_BROWSER: {
+                    std::string result = fileBrowser.update(input);
+                    if (!result.empty()) {
+                        // File selected — currently used for sprite loading
+                        // TODO: connect to particle sprite selection
+                        mode = AppMode::TRACKER;
+                    } else if (fileBrowser.cancelled()) {
                         mode = AppMode::TRACKER;
                     }
                     break;
@@ -328,16 +390,13 @@ int main(int argc, char* argv[]) {
 
         if (pattern.isPlaying() && pattern.hasEvent()) {
             const PatternStep& ev = pattern.currentEvent();
-            if (ev.nodeIndex >= 0 && ev.nodeIndex < (int)nodes.size()) {
-                nodes[ev.nodeIndex]->setParam(ev.paramName, ev.value);
+            if (ev.nodeIndex >= 0 && ev.nodeIndex < (int)allNodes.size()) {
+                allNodes[ev.nodeIndex]->setParam(ev.paramName, ev.value);
             }
         }
 
-        for (auto* node : nodes) {
-            if (node && node->active) {
-                node->update(dt, fft.level());
-            }
-        }
+        // Update all nodes via layer manager
+        layers.updateAll(dt, fft.level());
 
         // --- Render ---
         renderer.beginFrame();
@@ -345,11 +404,16 @@ int main(int argc, char* argv[]) {
         switch (mode) {
             case AppMode::PREVIEW:
             case AppMode::PERFORMANCE:
-                preview.render(renderer, nodes);
+                layers.renderAll(renderer);
+                break;
+
+            case AppMode::LAYER_EDITOR:
+                layers.renderAll(renderer);
+                layerEditor.render(renderer);
                 break;
 
             case AppMode::NODE_EDITOR:
-                nodeEditor.render(renderer, nodes);
+                nodeEditor.render(renderer, allNodes);
                 break;
 
             case AppMode::NODE_BROWSER:
@@ -360,24 +424,27 @@ int main(int argc, char* argv[]) {
                 presetBrowser.render(renderer);
                 break;
 
+            case AppMode::FILE_BROWSER:
+                fileBrowser.render(renderer);
+                break;
+
             case AppMode::TRACKER:
             default:
-                preview.render(renderer, nodes);
+                // Use layer manager for rendering
+                layers.renderAll(renderer);
                 tracker.render(renderer, pattern);
 
                 // Status bar
                 snprintf(statusBuf, sizeof(statusBuf),
-                    "BPM:%3.0f  NODE:%s  %s  FRM:%d",
+                    "BPM:%3.0f  LYR:%d/%s  %s  FRM:%d",
                     pattern.bpm(),
-                    nodes[activeNode]->typeName(),
+                    layers.currentLayer() + 1,
+                    layers.layer(layers.currentLayer()).name.c_str(),
                     pattern.isPlaying() ? "PLAY" : "STOP",
                     renderer.frameCount()
                 );
                 renderer.rect(0, RENDER_H - 10, RENDER_W, 10, {10, 10, 16}, true);
                 renderer.text(2, RENDER_H - 9, statusBuf, Palette::UI_FG);
-
-                snprintf(statusBuf, sizeof(statusBuf), "L%d", activeNode);
-                renderer.text(RENDER_W - 20, RENDER_H - 9, statusBuf, Palette::RED);
                 break;
         }
 
@@ -390,9 +457,11 @@ int main(int argc, char* argv[]) {
     // Cleanup
     audioInput.shutdown();
 
-    // Cleanup heap-allocated nodes
-    for (int i = staticNodeCount; i < (int)nodes.size(); i++) {
-        delete nodes[i];
+    // Cleanup all heap-allocated nodes from layers
+    for (int i = 0; i < layers.layerCount(); i++) {
+        for (auto* node : layers.layer(i).nodes) {
+            delete node;
+        }
     }
 
     renderer.shutdown();
