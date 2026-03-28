@@ -9,8 +9,10 @@ INCLUDES = $(shell sdl2-config --cflags) -Isrc
 SOURCES = \
 	src/main.cpp \
 	src/input.cpp \
+	src/preset.cpp \
 	src/engine/renderer.cpp \
 	src/engine/visual_node.cpp \
+	src/engine/param.cpp \
 	src/engine/nodes/bars.cpp \
 	src/engine/nodes/waveform.cpp \
 	src/engine/nodes/shapes.cpp \
@@ -20,7 +22,10 @@ SOURCES = \
 	src/sequencer/pattern.cpp \
 	src/ui/tracker_view.cpp \
 	src/ui/preview.cpp \
-	src/ui/menu.cpp
+	src/ui/menu.cpp \
+	src/ui/widgets.cpp \
+	src/ui/node_editor.cpp \
+	src/ui/node_browser.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 TARGET = pocket-vj

@@ -8,6 +8,39 @@ ShapesNode::ShapesNode() {
     y = RENDER_H / 2 - 30;
     w = 60;
     h = 60;
+    intensity = 1.0f;
+
+    params.addEnum("shape", "Shape", {"RECT", "CIRCLE", "LINE", "TRI"}, 1);
+    params.addToggle("filled", "Filled", true);
+    params.addFloat("rot_speed", "Rot Speed", 1.0f, 0.0f, 10.0f, 0.5f);
+    params.addFloat("pulse_speed", "Pulse Spd", 2.0f, 0.0f, 10.0f, 0.5f);
+    params.addFloat("intensity", "Intensity", 1.0f, 0.0f, 2.0f, 0.1f);
+    params.addToggle("reactive", "Reactive", false);
+    params.addColor("color", "Color", color.r, color.g, color.b);
+}
+
+void ShapesNode::applyParams() {
+    shape = (ShapeType)(int)params.get("shape");
+    filled = params.get("filled") > 0.5f;
+    rotSpeed = params.get("rot_speed");
+    pulseSpeed = params.get("pulse_speed");
+    intensity = params.get("intensity");
+    reactive = params.get("reactive") > 0.5f;
+    color.r = (uint8_t)params.get("color_r");
+    color.g = (uint8_t)params.get("color_g");
+    color.b = (uint8_t)params.get("color_b");
+}
+
+void ShapesNode::syncParams() {
+    params.set("shape", (float)shape);
+    params.set("filled", filled ? 1.0f : 0.0f);
+    params.set("rot_speed", rotSpeed);
+    params.set("pulse_speed", pulseSpeed);
+    params.set("intensity", intensity);
+    params.set("reactive", reactive ? 1.0f : 0.0f);
+    params.set("color_r", (float)color.r);
+    params.set("color_g", (float)color.g);
+    params.set("color_b", (float)color.b);
 }
 
 void ShapesNode::update(float dt, float audioLevel) {
@@ -52,7 +85,6 @@ void ShapesNode::render(Renderer& r) {
         case ShapeType::TRIANGLE: {
             float rad = rotation;
             int len = std::min(pw, ph) / 2;
-            // 3 points, 120° apart
             for (int i = 0; i < 3; i++) {
                 float a1 = rad + i * (6.28f / 3.0f);
                 float a2 = rad + (i + 1) * (6.28f / 3.0f);
@@ -65,15 +97,4 @@ void ShapesNode::render(Renderer& r) {
             break;
         }
     }
-}
-
-void ShapesNode::setParam(const std::string& name, float value) {
-    if (name == "shape") shape = (ShapeType)(int)value;
-    else if (name == "filled") filled = (value > 0.5f);
-    else if (name == "rot_speed") rotSpeed = value;
-    else if (name == "pulse_speed") pulseSpeed = value;
-    else if (name == "intensity") intensity = value;
-    else if (name == "color_r") color.r = (uint8_t)value;
-    else if (name == "color_g") color.g = (uint8_t)value;
-    else if (name == "color_b") color.b = (uint8_t)value;
 }

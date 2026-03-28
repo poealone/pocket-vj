@@ -7,9 +7,11 @@ public:
     void update(float dt, float audioLevel = 0.0f) override;
     void render(Renderer& r) override;
     const char* typeName() const override { return "WAVE"; }
-    void setParam(const std::string& name, float value) override;
+    const char* description() const override { return "Oscilloscope waveform"; }
 
-    // Set waveform data externally
+    void applyParams() override;
+    void syncParams() override;
+
     void setWaveData(const float* samples, int count);
 
     int thickness = 2;

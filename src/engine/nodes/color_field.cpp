@@ -6,9 +6,36 @@ ColorFieldNode::ColorFieldNode() {
     color2 = {40, 10, 60};
     x = 0; y = 0;
     w = RENDER_W; h = RENDER_H;
+
+    params.addEnum("type", "Type", {"SOLID", "GRAD V", "GRAD H", "PULSE"}, 1);
+    params.addFloat("pulse_speed", "Pulse Spd", 1.0f, 0.1f, 10.0f, 0.1f);
+    params.addColor("color", "Color 1", color.r, color.g, color.b);
+    params.addColor("color2", "Color 2", color2.r, color2.g, color2.b);
 }
 
-void ColorFieldNode::update(float dt, float audioLevel) {
+void ColorFieldNode::applyParams() {
+    fieldType = (FieldType)(int)params.get("type");
+    pulseSpeed = params.get("pulse_speed");
+    color.r = (uint8_t)params.get("color_r");
+    color.g = (uint8_t)params.get("color_g");
+    color.b = (uint8_t)params.get("color_b");
+    color2.r = (uint8_t)params.get("color2_r");
+    color2.g = (uint8_t)params.get("color2_g");
+    color2.b = (uint8_t)params.get("color2_b");
+}
+
+void ColorFieldNode::syncParams() {
+    params.set("type", (float)fieldType);
+    params.set("pulse_speed", pulseSpeed);
+    params.set("color_r", (float)color.r);
+    params.set("color_g", (float)color.g);
+    params.set("color_b", (float)color.b);
+    params.set("color2_r", (float)color2.r);
+    params.set("color2_g", (float)color2.g);
+    params.set("color2_b", (float)color2.b);
+}
+
+void ColorFieldNode::update(float dt, float /*audioLevel*/) {
     m_phase += dt * pulseSpeed;
 }
 
@@ -56,15 +83,4 @@ void ColorFieldNode::render(Renderer& r) {
             break;
         }
     }
-}
-
-void ColorFieldNode::setParam(const std::string& name, float value) {
-    if (name == "type") fieldType = (FieldType)(int)value;
-    else if (name == "pulse_speed") pulseSpeed = value;
-    else if (name == "color_r") color.r = (uint8_t)value;
-    else if (name == "color_g") color.g = (uint8_t)value;
-    else if (name == "color_b") color.b = (uint8_t)value;
-    else if (name == "color2_r") color2.r = (uint8_t)value;
-    else if (name == "color2_g") color2.g = (uint8_t)value;
-    else if (name == "color2_b") color2.b = (uint8_t)value;
 }

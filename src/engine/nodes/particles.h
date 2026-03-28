@@ -15,9 +15,12 @@ public:
     void update(float dt, float audioLevel = 0.0f) override;
     void render(Renderer& r) override;
     const char* typeName() const override { return "PTCL"; }
-    void setParam(const std::string& name, float value) override;
+    const char* description() const override { return "Particle emitter"; }
 
-    void burst(int count = 8);  // Trigger a particle burst
+    void applyParams() override;
+    void syncParams() override;
+
+    void burst(int count = 0);
 
     float gravity = -0.5f;
     float maxLifetime = 2.0f;
@@ -27,7 +30,7 @@ public:
 private:
     Particle m_particles[MAX_PARTICLES];
     float m_timer = 0.0f;
-    float m_autoRate = 0.0f;  // Auto-emit rate (0 = manual/beat only)
+    float m_autoRate = 0.0f;
 
     void emit(int count);
 };

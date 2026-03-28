@@ -9,7 +9,10 @@ public:
     void update(float dt, float audioLevel = 0.0f) override;
     void render(Renderer& r) override;
     const char* typeName() const override { return "SHAPE"; }
-    void setParam(const std::string& name, float value) override;
+    const char* description() const override { return "Geometric primitives"; }
+
+    void applyParams() override;
+    void syncParams() override;
 
     ShapeType shape = ShapeType::CIRCLE;
     bool filled = true;

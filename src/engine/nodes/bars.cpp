@@ -8,6 +8,40 @@ BarsNode::BarsNode() {
     y = 180;
     h = 60;
     reactive = true;
+    numBars = 16;
+    m_fallSpeed = 3.0f;
+    intensity = 1.0f;
+    gap = 1.0f;
+
+    // Register parameters
+    params.addInt("bars", "Bar Count", 16, 1, MAX_FFT_BINS);
+    params.addFloat("intensity", "Intensity", 1.0f, 0.0f, 2.0f, 0.1f);
+    params.addFloat("fall", "Fall Speed", 3.0f, 0.5f, 10.0f, 0.5f);
+    params.addFloat("gap", "Gap", 1.0f, 0.0f, 8.0f, 1.0f);
+    params.addToggle("reactive", "Reactive", true);
+    params.addColor("color", "Color", color.r, color.g, color.b);
+}
+
+void BarsNode::applyParams() {
+    numBars = std::max(1, std::min((int)params.get("bars"), (int)MAX_FFT_BINS));
+    intensity = params.get("intensity");
+    m_fallSpeed = params.get("fall");
+    gap = params.get("gap");
+    reactive = params.get("reactive") > 0.5f;
+    color.r = (uint8_t)params.get("color_r");
+    color.g = (uint8_t)params.get("color_g");
+    color.b = (uint8_t)params.get("color_b");
+}
+
+void BarsNode::syncParams() {
+    params.set("bars", (float)numBars);
+    params.set("intensity", intensity);
+    params.set("fall", m_fallSpeed);
+    params.set("gap", gap);
+    params.set("reactive", reactive ? 1.0f : 0.0f);
+    params.set("color_r", (float)color.r);
+    params.set("color_g", (float)color.g);
+    params.set("color_b", (float)color.b);
 }
 
 void BarsNode::setFFTData(const float* bins, int count) {
@@ -17,21 +51,17 @@ void BarsNode::setFFTData(const float* bins, int count) {
     }
 }
 
-void BarsNode::update(float dt, float audioLevel) {
-    // Smooth fall-off for bars
+void BarsNode::update(float dt, float /*audioLevel*/) {
     for (int i = 0; i < numBars; i++) {
         float target = (i < m_binCount) ? m_bins[i] : 0.0f;
 
         if (reactive) {
-            // Audio-reactive: use FFT data
             target *= intensity;
         } else {
-            // Demo mode: generate fake data
             float phase = (SDL_GetTicks() / 1000.0f) * 2.0f + i * 0.3f;
             target = (sinf(phase) * 0.5f + 0.5f) * intensity;
         }
 
-        // Smooth rise, slower fall
         if (target > m_smoothBins[i]) {
             m_smoothBins[i] = target;
         } else {
@@ -55,28 +85,11 @@ void BarsNode::render(Renderer& r) {
         int bx = x + (int)(i * (barW + gap));
         int by = y + h - barH;
 
-        // Color gradient: base color → brighter at peak
         Color c = color;
-        c.r = std::min(255, (int)(c.r * (0.5f + val * 0.5f)));
-        c.g = std::min(255, (int)(c.g * (0.5f + val * 0.5f)));
-        c.b = std::min(255, (int)(c.b * (0.5f + val * 0.5f)));
+        c.r = (uint8_t)std::min(255, (int)(c.r * (0.5f + val * 0.5f)));
+        c.g = (uint8_t)std::min(255, (int)(c.g * (0.5f + val * 0.5f)));
+        c.b = (uint8_t)std::min(255, (int)(c.b * (0.5f + val * 0.5f)));
 
         r.bar(bx, by, (int)barW, barH, c);
     }
-}
-
-void BarsNode::setParam(const std::string& name, float value) {
-    if (name == "bars") numBars = std::max(1, std::min((int)value, (int)MAX_FFT_BINS));
-    else if (name == "intensity") intensity = value;
-    else if (name == "fall") m_fallSpeed = value;
-    else if (name == "color_r") color.r = (uint8_t)value;
-    else if (name == "color_g") color.g = (uint8_t)value;
-    else if (name == "color_b") color.b = (uint8_t)value;
-}
-
-float BarsNode::getParam(const std::string& name) const {
-    if (name == "bars") return (float)numBars;
-    if (name == "intensity") return intensity;
-    if (name == "fall") return m_fallSpeed;
-    return 0.0f;
 }

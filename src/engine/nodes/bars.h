@@ -7,8 +7,10 @@ public:
     void update(float dt, float audioLevel = 0.0f) override;
     void render(Renderer& r) override;
     const char* typeName() const override { return "BARS"; }
-    void setParam(const std::string& name, float value) override;
-    float getParam(const std::string& name) const override;
+    const char* description() const override { return "Spectrum analyzer bars"; }
+
+    void applyParams() override;
+    void syncParams() override;
 
     // Set FFT data externally
     void setFFTData(const float* bins, int count);
