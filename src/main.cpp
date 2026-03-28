@@ -7,7 +7,19 @@
 #include "engine/nodes/shapes.h"
 #include "engine/nodes/particles.h"
 #include "engine/nodes/color_field.h"
+#include "engine/nodes/noise.h"
+#include "engine/nodes/laser.h"
+#include "engine/nodes/strobe.h"
+#include "engine/nodes/grid.h"
+#include "engine/nodes/tunnel.h"
+#include "engine/nodes/starfield.h"
+#include "engine/nodes/plasma.h"
+#include "engine/nodes/mirror.h"
 #include "engine/audio/fft.h"
+#include "engine/audio/audio_input.h"
+#include "engine/modulators/lfo.h"
+#include "engine/modulators/envelope.h"
+#include "engine/modulators/audio_mod.h"
 #include "sequencer/pattern.h"
 #include "ui/tracker_view.h"
 #include "ui/preview.h"
@@ -39,11 +51,22 @@ static void ensurePresetsDir() {
 // Create a new node by type ID (from node browser)
 static VisualNode* createNode(int typeId) {
     switch (typeId) {
-        case 0: return new BarsNode();
-        case 1: return new WaveformNode();
-        case 2: return new ShapesNode();
-        case 3: return new ParticlesNode();
-        case 4: return new ColorFieldNode();
+        case 0:  return new BarsNode();
+        case 1:  return new WaveformNode();
+        case 2:  return new ShapesNode();
+        case 3:  return new ParticlesNode();
+        case 4:  return new ColorFieldNode();
+        case 5:  return new NoiseNode();
+        case 6:  return new LaserNode();
+        case 7:  return new StrobeNode();
+        case 8:  return new GridNode();
+        case 9:  return new TunnelNode();
+        case 10: return new StarfieldNode();
+        case 11: return new PlasmaNode();
+        case 12: return new MirrorNode();
+        case 13: return new LFOModulator();
+        case 14: return new EnvelopeModulator();
+        case 15: return new AudioModulator();
         default: return nullptr;
     }
 }
@@ -62,6 +85,15 @@ int main(int argc, char* argv[]) {
     input.init();
     FFTAnalyzer fft;
     fft.init();
+
+    // --- Audio Input ---
+    AudioInput audioInput;
+    bool hasAudio = audioInput.init();
+    if (hasAudio) {
+        SDL_Log("Audio capture initialized");
+    } else {
+        SDL_Log("Using demo audio mode");
+    }
 
     ensurePresetsDir();
 
@@ -143,9 +175,20 @@ int main(int argc, char* argv[]) {
 
         float dt = renderer.deltaTime();
 
-        // --- FFT demo data ---
-        fft.generateDemo(dt);
+        // --- Audio + FFT ---
+        audioInput.update(fft);
+        if (!fft.hasAudioInput()) {
+            fft.generateDemo(dt);
+        }
         bars.setFFTData(fft.bins(), fft.binCount());
+
+        // --- Feed audio modulators ---
+        for (auto* node : nodes) {
+            AudioModulator* amod = dynamic_cast<AudioModulator*>(node);
+            if (amod && amod->active) {
+                amod->feed(fft);
+            }
+        }
 
         // --- Handle mode-specific input ---
         if (menu.isOpen()) {
@@ -343,6 +386,9 @@ int main(int argc, char* argv[]) {
 
         renderer.endFrame();
     }
+
+    // Cleanup
+    audioInput.shutdown();
 
     // Cleanup heap-allocated nodes
     for (int i = staticNodeCount; i < (int)nodes.size(); i++) {

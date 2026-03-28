@@ -18,7 +18,19 @@ SOURCES = \
 	src/engine/nodes/shapes.cpp \
 	src/engine/nodes/particles.cpp \
 	src/engine/nodes/color_field.cpp \
+	src/engine/nodes/noise.cpp \
+	src/engine/nodes/laser.cpp \
+	src/engine/nodes/strobe.cpp \
+	src/engine/nodes/grid.cpp \
+	src/engine/nodes/tunnel.cpp \
+	src/engine/nodes/starfield.cpp \
+	src/engine/nodes/plasma.cpp \
+	src/engine/nodes/mirror.cpp \
 	src/engine/audio/fft.cpp \
+	src/engine/audio/audio_input.cpp \
+	src/engine/modulators/lfo.cpp \
+	src/engine/modulators/envelope.cpp \
+	src/engine/modulators/audio_mod.cpp \
 	src/sequencer/pattern.cpp \
 	src/ui/tracker_view.cpp \
 	src/ui/preview.cpp \

@@ -8,18 +8,42 @@ enum NodeTypeId {
     NT_SHAPE,
     NT_PARTICLE,
     NT_FIELD,
-    // Future nodes get IDs here
+    NT_NOISE,
+    NT_LASER,
+    NT_STROBE,
+    NT_GRID,
+    NT_TUNNEL,
+    NT_STARFIELD,
+    NT_PLASMA,
+    NT_MIRROR,
+    NT_LFO,
+    NT_ENVELOPE,
+    NT_AUDIOMOD,
     NT_COUNT
 };
 
 NodeBrowser::NodeBrowser() {
     // Populate the browser entries with all available nodes
     m_entries = {
+        // Source nodes
         {"BARS",     "Spectrum analyzer bars",    NodeCategory::SOURCE, NT_BARS},
         {"WAVE",     "Oscilloscope waveform",     NodeCategory::SOURCE, NT_WAVE},
         {"SHAPE",    "Geometric primitives",      NodeCategory::SOURCE, NT_SHAPE},
         {"PARTICLE", "Particle emitter",          NodeCategory::SOURCE, NT_PARTICLE},
         {"FIELD",    "Color fill / gradient",     NodeCategory::SOURCE, NT_FIELD},
+        {"NOISE",    "Procedural noise pattern",  NodeCategory::SOURCE, NT_NOISE},
+        {"LASER",    "Vector line patterns",      NodeCategory::SOURCE, NT_LASER},
+        {"STROBE",   "Flash/pulse strobe",        NodeCategory::SOURCE, NT_STROBE},
+        {"GRID",     "Animated dot grid",         NodeCategory::SOURCE, NT_GRID},
+        {"TUNNEL",   "Infinite tunnel effect",    NodeCategory::SOURCE, NT_TUNNEL},
+        {"STAR",     "3D star field",             NodeCategory::SOURCE, NT_STARFIELD},
+        {"PLASMA",   "Plasma sine waves",         NodeCategory::SOURCE, NT_PLASMA},
+        // FX nodes
+        {"MIRROR",   "Mirror framebuffer",        NodeCategory::FX, NT_MIRROR},
+        // Modulator nodes
+        {"LFO",      "LFO modulator",             NodeCategory::MODULATOR, NT_LFO},
+        {"ENV",      "ADSR envelope",             NodeCategory::MODULATOR, NT_ENVELOPE},
+        {"AMOD",     "Audio-reactive mod",        NodeCategory::MODULATOR, NT_AUDIOMOD},
     };
 }
 
