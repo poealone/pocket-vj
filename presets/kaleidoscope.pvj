@@ -1,22 +1,27 @@
 {
   "version": 2,
   "name": "Kaleidoscope",
-  "bpm": 120.0,
+  "bpm": 130.0,
   "nodes": [
-    {
-      "type": "LASER",
-      "active": true,
-      "params": { "points": 3, "speed": 4.0, "decay": 0.8, "thickness": 4, "color_r": 255, "color_g": 100, "color_b": 0 }
-    },
     {
       "type": "SHAPE",
       "active": true,
-      "params": { "shape": 2, "filled": 0, "rot_speed": 3.0, "pulse_speed": 8.0, "intensity": 1.5, "reactive": 0, "color_r": 0, "color_g": 255, "color_b": 180 }
+      "params": {
+        "shape": 1, "filled": 0,
+        "rot_speed": 3.0,
+        "rot_speed__anim": 1, "rot_speed__amin": -5.0, "rot_speed__amax": 5.0, "rot_speed__aspd": 0.3, "rot_speed__ashp": 0,
+        "pulse_speed": 5.0, "intensity": 1.5, "reactive": 0,
+        "color_r": 200,
+        "color_r__anim": 1, "color_r__amin": 0, "color_r__amax": 255, "color_r__aspd": 0.2, "color_r__ashp": 0,
+        "color_g": 100,
+        "color_g__anim": 1, "color_g__amin": 0, "color_g__amax": 255, "color_g__aspd": 0.18, "color_g__ashp": 0,
+        "color_b": 200
+      }
     },
     {
       "type": "MIRROR",
       "active": true,
-      "params": { "axis": 0, "offset": 0.5 }
+      "params": { "axis": 2, "offset": 0.5 }
     },
     {
       "type": "MIRROR",
@@ -24,9 +29,24 @@
       "params": { "axis": 1, "offset": 0.5 }
     },
     {
-      "type": "FEED",
+      "type": "LASER",
       "active": true,
-      "params": { "decay": 0.94, "offset_x": 1, "offset_y": 0, "zoom": 0.98 }
+      "params": {
+        "points": 8,
+        "speed": 4.0,
+        "speed__anim": 1, "speed__amin": 1.0, "speed__amax": 8.0, "speed__aspd": 0.25, "speed__ashp": 1,
+        "decay": 0.4, "thickness": 2,
+        "color_r": 255, "color_g": 200, "color_b": 0
+      }
+    },
+    {
+      "type": "CSHIFT",
+      "active": true,
+      "params": {
+        "hue_shift": 0.0,
+        "hue_shift__anim": 1, "hue_shift__amin": 0.0, "hue_shift__amax": 360.0, "hue_shift__aspd": 0.5, "hue_shift__ashp": 2,
+        "saturation": 1.8, "brightness": 1.3
+      }
     }
   ]
 }

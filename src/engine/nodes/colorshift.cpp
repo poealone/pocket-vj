@@ -20,7 +20,10 @@ void ColorShiftNode::syncParams() {
     params.set("brightness", brightness);
 }
 
-void ColorShiftNode::update(float /*dt*/, float /*audioLevel*/) {}
+void ColorShiftNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
+}
 
 void ColorShiftNode::rgbToHsv(uint8_t r, uint8_t g, uint8_t b, float& h, float& s, float& v) {
     float rf = r / 255.0f, gf = g / 255.0f, bf = b / 255.0f;

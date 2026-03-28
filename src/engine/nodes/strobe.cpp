@@ -28,6 +28,8 @@ void StrobeNode::syncParams() {
 }
 
 void StrobeNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
     m_phase += dt * rate;
     if (m_phase >= 1.0f) m_phase -= 1.0f;
     m_on = (m_phase < dutyCycle);

@@ -47,6 +47,8 @@ void PlasmaNode::syncParams() {
 }
 
 void PlasmaNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
     m_time += dt * speed;
 }
 

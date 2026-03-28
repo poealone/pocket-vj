@@ -34,6 +34,8 @@ void LaserNode::syncParams() {
 }
 
 void LaserNode::update(float dt, float audioLevel) {
+    params.animateAll(dt);
+    applyParams();
     m_angle += dt * speed;
     m_pulse += dt * 4.0f;
     if (reactive && audioLevel > 0.0f) {

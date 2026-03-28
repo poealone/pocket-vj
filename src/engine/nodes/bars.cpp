@@ -52,6 +52,8 @@ void BarsNode::setFFTData(const float* bins, int count) {
 }
 
 void BarsNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
     for (int i = 0; i < numBars; i++) {
         float target = (i < m_binCount) ? m_bins[i] : 0.0f;
 

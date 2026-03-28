@@ -39,6 +39,8 @@ void TunnelNode::syncParams() {
 }
 
 void TunnelNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
     m_time += dt * speed;
 }
 

@@ -37,6 +37,8 @@ void EnvelopeModulator::release() {
 }
 
 void EnvelopeModulator::update(float dt, float audioLevel) {
+    params.animateAll(dt);
+    applyParams();
     // Auto-trigger on beat if reactive
     if (reactive && audioLevel > 0.5f && m_stage == EnvStage::IDLE) {
         trigger();

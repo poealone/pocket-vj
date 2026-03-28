@@ -449,11 +449,95 @@ int main(int argc, char* argv[]) {
                             Preset::PresetData data = Preset::load(result);
                             if (data.valid) {
                                 pattern.setBpm(data.bpm);
-                                for (int i = 0; i < (int)data.nodes.size() && i < (int)allNodes.size(); i++) {
-                                    for (auto& [pname, pval] : data.nodes[i].params) {
-                                        allNodes[i]->setParam(pname, pval);
-                                    }
+
+                                // Clear ALL nodes from ALL layers
+                                for (int li = 0; li < layers.layerCount(); li++) {
+                                    auto& lnodes = layers.layer(li).nodes;
+                                    for (auto* n : lnodes) delete n;
+                                    lnodes.clear();
                                 }
+
+                                // typeName to typeId mapping
+                                auto typeNameToId = [](const std::string& tn) -> int {
+                                    if (tn == "BARS")   return 0;
+                                    if (tn == "WAVE")   return 1;
+                                    if (tn == "SHAPE")  return 2;
+                                    if (tn == "PTCL")   return 3;
+                                    if (tn == "FIELD")  return 4;
+                                    if (tn == "NOISE")  return 5;
+                                    if (tn == "LASER")  return 6;
+                                    if (tn == "STROBE") return 7;
+                                    if (tn == "GRID")   return 8;
+                                    if (tn == "TUNNEL") return 9;
+                                    if (tn == "STAR")   return 10;
+                                    if (tn == "PLASMA") return 11;
+                                    if (tn == "MIRROR") return 12;
+                                    if (tn == "BLUR")   return 13;
+                                    if (tn == "FEED")   return 14;
+                                    if (tn == "GLITCH") return 15;
+                                    if (tn == "SCAN")   return 16;
+                                    if (tn == "PIXEL")  return 17;
+                                    if (tn == "CSHIFT") return 18;
+                                    if (tn == "EDGE")   return 19;
+                                    if (tn == "LFO")    return 20;
+                                    if (tn == "ENV")    return 21;
+                                    if (tn == "AMOD")   return 22;
+                                    if (tn == "MESH")   return 23;
+                                    if (tn == "CUBE")   return 24;
+                                    if (tn == "SPHERE") return 25;
+                                    if (tn == "TORUS")  return 26;
+                                    return -1;
+                                };
+
+                                // Recreate nodes from preset data
+                                layers.setCurrentLayer(0);
+                                int nodesPerLayer = 8;
+                                for (int i = 0; i < (int)data.nodes.size(); i++) {
+                                    int typeId = typeNameToId(data.nodes[i].typeName);
+                                    if (typeId < 0) continue;
+
+                                    // Distribute across layers if > 8 nodes
+                                    int targetLayer = i / nodesPerLayer;
+                                    if (targetLayer >= layers.layerCount()) targetLayer = layers.layerCount() - 1;
+                                    layers.setCurrentLayer(targetLayer);
+
+                                    VisualNode* newNode = createNode(typeId);
+                                    if (!newNode) continue;
+
+                                    // Inject Camera3D into 3D nodes
+                                    if (auto* m = dynamic_cast<MeshNode*>(newNode))   m->setCamera(&camera3d);
+                                    if (auto* m = dynamic_cast<CubeNode*>(newNode))   m->setCamera(&camera3d);
+                                    if (auto* m = dynamic_cast<SphereNode*>(newNode)) m->setCamera(&camera3d);
+                                    if (auto* m = dynamic_cast<TorusNode*>(newNode))  m->setCamera(&camera3d);
+
+                                    // Apply params (regular + animation)
+                                    for (auto& [pname, pval] : data.nodes[i].params) {
+                                        // Check for animation suffix
+                                        size_t dpos = pname.find("__");
+                                        if (dpos != std::string::npos) {
+                                            std::string baseName = pname.substr(0, dpos);
+                                            std::string suffix = pname.substr(dpos + 2);
+                                            Param* pp = newNode->params.find(baseName);
+                                            if (pp) {
+                                                if (suffix == "anim") pp->animated = (pval > 0.5f);
+                                                else if (suffix == "amin") pp->animMin = pval;
+                                                else if (suffix == "amax") pp->animMax = pval;
+                                                else if (suffix == "aspd") pp->animSpeed = pval;
+                                                else if (suffix == "ashp") pp->animShape = (int)pval;
+                                            }
+                                        } else {
+                                            newNode->setParam(pname, pval);
+                                        }
+                                    }
+
+                                    layers.addNode(newNode);
+                                }
+
+                                // Reset to layer 0
+                                layers.setCurrentLayer(0);
+
+                                // Refresh allNodes
+                                allNodes = layers.allNodes();
                             }
                         }
                         mode = AppMode::TRACKER;

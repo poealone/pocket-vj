@@ -1,32 +1,49 @@
 {
   "version": 2,
   "name": "Laser Cage",
-  "bpm": 135.0,
+  "bpm": 128.0,
   "nodes": [
-    {
-      "type": "LASER",
-      "active": true,
-      "params": { "points": 8, "speed": 7.0, "decay": 0.0, "thickness": 1, "color_r": 0, "color_g": 255, "color_b": 0 }
-    },
-    {
-      "type": "LASER",
-      "active": true,
-      "params": { "points": 5, "speed": 3.0, "decay": 0.9, "thickness": 3, "color_r": 255, "color_g": 0, "color_b": 255 }
-    },
     {
       "type": "GRID",
       "active": true,
-      "params": { "rows": 6, "cols": 8, "spacing": 32, "dot_size": 4, "wave_amt": 0.0, "wave_spd": 0.0, "color_r": 40, "color_g": 40, "color_b": 40 }
+      "params": {
+        "rows": 8, "cols": 8,
+        "spacing": 30,
+        "spacing__anim": 1, "spacing__amin": 20, "spacing__amax": 40, "spacing__aspd": 0.3, "spacing__ashp": 1,
+        "dot_size": 3,
+        "wave_amt": 15.0,
+        "wave_amt__anim": 1, "wave_amt__amin": 5.0, "wave_amt__amax": 30.0, "wave_amt__aspd": 0.2, "wave_amt__ashp": 0,
+        "wave_spd": 5.0,
+        "color_r": 0, "color_g": 255, "color_b": 200
+      }
     },
     {
-      "type": "MIRROR",
+      "type": "LASER",
       "active": true,
-      "params": { "axis": 2, "offset": 0.5 }
+      "params": {
+        "points": 10,
+        "speed": 6.0,
+        "speed__anim": 1, "speed__amin": 2.0, "speed__amax": 10.0, "speed__aspd": 0.4, "speed__ashp": 0,
+        "decay": 0.2, "thickness": 3,
+        "color_r": 0, "color_g": 255, "color_b": 150
+      }
     },
     {
-      "type": "SCAN",
+      "type": "EDGE",
       "active": true,
-      "params": { "spacing": 4, "thickness": 2, "intensity": 0.3 }
+      "params": {
+        "threshold": 80,
+        "edge_color_r": 255, "edge_color_g": 255, "edge_color_b": 255
+      }
+    },
+    {
+      "type": "CSHIFT",
+      "active": true,
+      "params": {
+        "hue_shift": 0.0,
+        "hue_shift__anim": 1, "hue_shift__amin": 120.0, "hue_shift__amax": 240.0, "hue_shift__aspd": 0.3, "hue_shift__ashp": 0,
+        "saturation": 1.9, "brightness": 1.4
+      }
     }
   ]
 }

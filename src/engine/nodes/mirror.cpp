@@ -19,8 +19,9 @@ void MirrorNode::syncParams() {
     params.set("offset", offset);
 }
 
-void MirrorNode::update(float /*dt*/, float /*audioLevel*/) {
-    // No animation state needed
+void MirrorNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
 }
 
 void MirrorNode::render(Renderer& r) {

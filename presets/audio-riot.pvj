@@ -1,32 +1,59 @@
 {
   "version": 2,
   "name": "Audio Riot",
-  "bpm": 140.0,
+  "bpm": 160.0,
   "nodes": [
     {
       "type": "BARS",
       "active": true,
-      "params": { "bars": 128, "intensity": 2.0, "fall": 0.5, "gap": 0.0, "reactive": 1, "color_r": 255, "color_g": 0, "color_b": 0 }
+      "params": {
+        "bars": 32,
+        "intensity": 1.5,
+        "intensity__anim": 1, "intensity__amin": 0.5, "intensity__amax": 2.0, "intensity__aspd": 0.8, "intensity__ashp": 0,
+        "fall": 6.0, "gap": 2.0, "reactive": 1,
+        "color_r": 255, "color_g": 50,
+        "color_g__anim": 1, "color_g__amin": 0, "color_g__amax": 200, "color_g__aspd": 0.3, "color_g__ashp": 0,
+        "color_b": 0
+      }
     },
     {
       "type": "WAVE",
       "active": true,
-      "params": { "thickness": 6, "speed": 5.0, "intensity": 2.0, "reactive": 1 }
+      "params": {
+        "thickness": 3,
+        "speed": 2.0,
+        "speed__anim": 1, "speed__amin": 0.5, "speed__amax": 5.0, "speed__aspd": 0.25, "speed__ashp": 1,
+        "intensity": 1.8, "reactive": 1,
+        "color_r": 0, "color_g": 200, "color_b": 255
+      }
     },
     {
-      "type": "PTCL",
+      "type": "STROBE",
       "active": true,
-      "params": { "gravity": 0.0, "lifetime": 1.0, "spread": 10.0, "burst": 16, "rate": 20.0, "intensity": 2.0, "reactive": 1, "color_r": 255, "color_g": 255, "color_b": 0 }
-    },
-    {
-      "type": "AMOD",
-      "active": true,
-      "params": { "source": 4, "gain": 5.0, "smooth": 0.1 }
+      "params": {
+        "rate": 8.0,
+        "rate__anim": 1, "rate__amin": 2.0, "rate__amax": 16.0, "rate__aspd": 0.5, "rate__ashp": 2,
+        "duty": 0.3,
+        "color_r": 255, "color_g": 255, "color_b": 255
+      }
     },
     {
       "type": "GLITCH",
       "active": true,
-      "params": { "intensity": 0.5, "block_size": 3, "color_shift": 8 }
+      "params": {
+        "intensity": 0.6,
+        "intensity__anim": 1, "intensity__amin": 0.0, "intensity__amax": 1.0, "intensity__aspd": 1.5, "intensity__ashp": 4,
+        "block_size": 8, "color_shift": 10
+      }
+    },
+    {
+      "type": "CSHIFT",
+      "active": true,
+      "params": {
+        "hue_shift": 0.0,
+        "hue_shift__anim": 1, "hue_shift__amin": 0.0, "hue_shift__amax": 360.0, "hue_shift__aspd": 0.4, "hue_shift__ashp": 2,
+        "saturation": 1.5, "brightness": 1.2
+      }
     }
   ]
 }

@@ -40,6 +40,8 @@ void GridNode::syncParams() {
 }
 
 void GridNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
     m_time += dt * waveSpeed;
 }
 

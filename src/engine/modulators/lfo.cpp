@@ -29,6 +29,8 @@ void LFOModulator::syncParams() {
 }
 
 void LFOModulator::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
     m_phase += dt * rate;
     if (m_phase >= 1.0f) m_phase -= (int)m_phase;
 

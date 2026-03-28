@@ -1,27 +1,43 @@
 {
   "version": 2,
   "name": "Melt",
-  "bpm": 75.0,
+  "bpm": 105.0,
   "nodes": [
     {
-      "type": "NOISE",
+      "type": "PLASMA",
       "active": true,
-      "params": { "scale": 5.0, "speed": 0.5, "octaves": 4, "color_r": 180, "color_g": 30, "color_b": 0, "color2_r": 255, "color2_g": 200, "color2_b": 0 }
-    },
-    {
-      "type": "FEED",
-      "active": true,
-      "params": { "decay": 0.995, "offset_x": 0, "offset_y": 3, "zoom": 1.0 }
+      "params": {
+        "speed": 4.0,
+        "speed__anim": 1, "speed__amin": 0.5, "speed__amax": 8.0, "speed__aspd": 0.3, "speed__ashp": 0,
+        "scale": 25.0,
+        "scale__anim": 1, "scale__amin": 5.0, "scale__amax": 60.0, "scale__aspd": 0.2, "scale__ashp": 1,
+        "complexity": 3,
+        "color_r": 200,
+        "color_r__anim": 1, "color_r__amin": 100, "color_r__amax": 255, "color_r__aspd": 0.15, "color_r__ashp": 0,
+        "color_g": 50,
+        "color_g__anim": 1, "color_g__amin": 0, "color_g__amax": 150, "color_g__aspd": 0.2, "color_g__ashp": 0,
+        "color_b": 0,
+        "color2_r": 255, "color2_g": 150, "color2_b": 0,
+        "color3_r": 200, "color3_g": 200, "color3_b": 0
+      }
     },
     {
       "type": "BLUR",
       "active": true,
-      "params": { "radius": 8, "passes": 3 }
+      "params": {
+        "radius": 4,
+        "radius__anim": 1, "radius__amin": 1, "radius__amax": 8, "radius__aspd": 0.4, "radius__ashp": 1,
+        "passes": 2
+      }
     },
     {
       "type": "CSHIFT",
       "active": true,
-      "params": { "hue_shift": 5.0, "saturation": 1.8, "brightness": 0.8 }
+      "params": {
+        "hue_shift": 0.0,
+        "hue_shift__anim": 1, "hue_shift__amin": 0.0, "hue_shift__amax": 60.0, "hue_shift__aspd": 0.15, "hue_shift__ashp": 0,
+        "saturation": 1.5, "brightness": 1.1
+      }
     }
   ]
 }

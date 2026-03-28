@@ -36,6 +36,8 @@ void ColorFieldNode::syncParams() {
 }
 
 void ColorFieldNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
     m_phase += dt * pulseSpeed;
 }
 

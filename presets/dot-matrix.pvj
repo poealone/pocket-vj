@@ -1,27 +1,45 @@
 {
   "version": 2,
   "name": "Dot Matrix",
-  "bpm": 128.0,
+  "bpm": 100.0,
   "nodes": [
     {
       "type": "GRID",
       "active": true,
-      "params": { "rows": 24, "cols": 32, "spacing": 10, "dot_size": 3, "wave_amt": 15.0, "wave_spd": 6.0, "color_r": 0, "color_g": 255, "color_b": 50 }
-    },
-    {
-      "type": "BARS",
-      "active": true,
-      "params": { "bars": 32, "intensity": 1.5, "fall": 8.0, "gap": 0.0, "reactive": 1, "color_r": 0, "color_g": 180, "color_b": 0 }
+      "params": {
+        "rows": 20, "cols": 26,
+        "spacing": 12,
+        "spacing__anim": 1, "spacing__amin": 6, "spacing__amax": 24, "spacing__aspd": 0.12, "spacing__ashp": 1,
+        "dot_size": 2,
+        "wave_amt": 10.0,
+        "wave_amt__anim": 1, "wave_amt__amin": 0.0, "wave_amt__amax": 20.0, "wave_amt__aspd": 0.25, "wave_amt__ashp": 0,
+        "wave_spd": 4.0,
+        "color_r": 0, "color_g": 255,
+        "color_g__anim": 1, "color_g__amin": 100, "color_g__amax": 255, "color_g__aspd": 0.4, "color_g__ashp": 0,
+        "color_b": 80
+      }
     },
     {
       "type": "PIXEL",
       "active": true,
-      "params": { "block_size": 4 }
+      "params": {
+        "block_size": 4,
+        "block_size__anim": 1, "block_size__amin": 2, "block_size__amax": 10, "block_size__aspd": 0.3, "block_size__ashp": 1
+      }
     },
     {
-      "type": "SCAN",
+      "type": "MIRROR",
       "active": true,
-      "params": { "spacing": 2, "thickness": 1, "intensity": 0.7 }
+      "params": { "axis": 0, "offset": 0.5 }
+    },
+    {
+      "type": "CSHIFT",
+      "active": true,
+      "params": {
+        "hue_shift": 0.0,
+        "hue_shift__anim": 1, "hue_shift__amin": 0.0, "hue_shift__amax": 120.0, "hue_shift__aspd": 0.1, "hue_shift__ashp": 0,
+        "saturation": 1.2, "brightness": 1.0
+      }
     }
   ]
 }

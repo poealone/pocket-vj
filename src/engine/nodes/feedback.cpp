@@ -31,7 +31,10 @@ void FeedbackNode::syncParams() {
     params.set("zoom", zoom);
 }
 
-void FeedbackNode::update(float /*dt*/, float /*audioLevel*/) {}
+void FeedbackNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
+}
 
 void FeedbackNode::render(Renderer& r) {
     if (!active) return;

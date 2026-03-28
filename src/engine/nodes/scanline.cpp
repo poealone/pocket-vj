@@ -18,7 +18,10 @@ void ScanlineNode::syncParams() {
     params.set("intensity", scanIntensity);
 }
 
-void ScanlineNode::update(float /*dt*/, float /*audioLevel*/) {}
+void ScanlineNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
+}
 
 void ScanlineNode::render(Renderer& r) {
     if (!active || scanIntensity <= 0.0f) return;

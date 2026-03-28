@@ -1,4 +1,55 @@
 #include "param.h"
+#include <cmath>
+#include <cstdlib>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+void Param::animate(float dt) {
+    if (!animated) return;
+
+    float oldPhase = animPhase;
+    animPhase += animSpeed * dt;
+    // Wrap to 0..1
+    animPhase -= (float)(int)animPhase;
+    if (animPhase < 0.0f) animPhase += 1.0f;
+
+    float t = 0.0f;
+    switch (animShape) {
+        case 0: // SINE
+            t = 0.5f + 0.5f * sinf(animPhase * 2.0f * (float)M_PI);
+            break;
+        case 1: // TRI
+            t = animPhase < 0.5f ? animPhase * 2.0f : 2.0f - animPhase * 2.0f;
+            break;
+        case 2: // SAW
+            t = animPhase;
+            break;
+        case 3: // SQUARE
+            t = animPhase < 0.5f ? 1.0f : 0.0f;
+            break;
+        case 4: // RANDOM
+            // New random value when phase wraps (goes from high to low)
+            if (animPhase < oldPhase) {
+                animRandVal = (float)rand() / (float)RAND_MAX;
+            }
+            t = animRandVal;
+            break;
+        default:
+            t = 0.0f;
+            break;
+    }
+
+    value = animMin + t * (animMax - animMin);
+    clamp();
+}
+
+void ParamList::animateAll(float dt) {
+    for (auto& p : m_params) {
+        p.animate(dt);
+    }
+}
 
 void ParamList::addFloat(const std::string& name, const std::string& display,
                          float def, float minV, float maxV, float stp) {

@@ -22,6 +22,18 @@ struct Param {
     float maxVal   = 1.0f;
     float step     = 0.1f;
 
+    // Animation
+    bool  animated    = false;
+    float animMin     = 0.0f;   // Animation range minimum
+    float animMax     = 1.0f;   // Animation range maximum
+    float animSpeed   = 1.0f;   // Cycles per second
+    int   animShape   = 0;      // 0=SINE, 1=TRI, 2=SAW, 3=SQUARE, 4=RANDOM
+    float animPhase   = 0.0f;   // Internal phase accumulator (0..1)
+    float animRandVal = 0.0f;   // Stored random value for RANDOM shape
+
+    // Call each frame to advance animation
+    void animate(float dt);
+
     // ENUM options
     std::vector<std::string> enumOptions;
 
@@ -75,6 +87,9 @@ public:
     const Param& at(int index) const { return m_params[index]; }
     Param* find(const std::string& name);
     const Param* find(const std::string& name) const;
+
+    // Animate all params
+    void animateAll(float dt);
 
     // For sequencer compatibility
     void set(const std::string& name, float value);

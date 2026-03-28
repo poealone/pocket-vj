@@ -21,7 +21,10 @@ void GlitchNode::syncParams() {
     params.set("color_shift", (float)color_shift);
 }
 
-void GlitchNode::update(float /*dt*/, float /*audioLevel*/) {}
+void GlitchNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
+}
 
 void GlitchNode::render(Renderer& r) {
     if (!active || glitchIntensity <= 0.0f) return;

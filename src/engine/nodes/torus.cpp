@@ -65,6 +65,8 @@ void TorusNode::regenerate() {
 }
 
 void TorusNode::update(float dt, float audioLevel) {
+    params.animateAll(dt);
+    applyParams();
     (void)audioLevel;
     if (autoRotate) {
         m_autoRotY += rotSpeed * dt * 60.0f;

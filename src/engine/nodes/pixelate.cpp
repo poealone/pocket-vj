@@ -13,7 +13,10 @@ void PixelateNode::syncParams() {
     params.set("block_size", (float)block_size);
 }
 
-void PixelateNode::update(float /*dt*/, float /*audioLevel*/) {}
+void PixelateNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
+}
 
 void PixelateNode::render(Renderer& r) {
     if (!active || block_size < 2) return;

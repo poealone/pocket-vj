@@ -1,32 +1,49 @@
 {
   "version": 2,
   "name": "Shattered Cube",
-  "bpm": 150.0,
+  "bpm": 125.0,
   "nodes": [
     {
       "type": "CUBE",
       "active": true,
-      "params": { "size": 3.0, "rot_x": 30, "rot_y": 45, "auto_rotate": 1, "rot_speed": 6.0, "wireframe": 0, "color_r": 255, "color_g": 50, "color_b": 50 }
+      "params": {
+        "size": 1.5,
+        "size__anim": 1, "size__amin": 0.5, "size__amax": 3.0, "size__aspd": 0.4, "size__ashp": 1,
+        "rot_x": 0,
+        "rot_x__anim": 1, "rot_x__amin": 0, "rot_x__amax": 360, "rot_x__aspd": 0.1, "rot_x__ashp": 2,
+        "rot_y": 0,
+        "rot_y__anim": 1, "rot_y__amin": 0, "rot_y__amax": 360, "rot_y__aspd": 0.12, "rot_y__ashp": 2,
+        "rot_z": 0,
+        "rot_z__anim": 1, "rot_z__amin": 0, "rot_z__amax": 360, "rot_z__aspd": 0.08, "rot_z__ashp": 2,
+        "auto_rotate": 0, "rot_speed": 1.0, "wireframe": 1,
+        "color_r": 0, "color_g": 200, "color_b": 255
+      }
     },
     {
-      "type": "SPHERE",
+      "type": "EDGE",
       "active": true,
-      "params": { "radius": 1.5, "segments": 6, "auto_rotate": 1, "rot_speed": 3.0, "wireframe": 1, "color_r": 50, "color_g": 50, "color_b": 255 }
-    },
-    {
-      "type": "GLITCH",
-      "active": true,
-      "params": { "intensity": 0.7, "block_size": 6, "color_shift": 12 }
+      "params": {
+        "threshold": 60,
+        "edge_color_r": 200, "edge_color_g": 100, "edge_color_b": 255
+      }
     },
     {
       "type": "FEED",
       "active": true,
-      "params": { "decay": 0.88, "offset_x": -3, "offset_y": 2, "zoom": 1.06 }
+      "params": {
+        "decay": 0.94,
+        "offset_x": 0, "offset_y": 0,
+        "zoom": 1.0
+      }
     },
     {
-      "type": "SCAN",
+      "type": "CSHIFT",
       "active": true,
-      "params": { "spacing": 3, "thickness": 1, "intensity": 0.6 }
+      "params": {
+        "hue_shift": 0.0,
+        "hue_shift__anim": 1, "hue_shift__amin": 180.0, "hue_shift__amax": 360.0, "hue_shift__aspd": 0.2, "hue_shift__ashp": 0,
+        "saturation": 1.7, "brightness": 1.3
+      }
     }
   ]
 }

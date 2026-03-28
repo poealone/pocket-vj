@@ -43,6 +43,8 @@ void StarfieldNode::initStar(Star& s, bool randomZ) {
 }
 
 void StarfieldNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
     if (!m_initialized) {
         for (int i = 0; i < MAX_PARTICLES; i++) {
             initStar(m_stars[i], true);

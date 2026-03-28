@@ -1,32 +1,53 @@
 {
   "version": 2,
   "name": "Everything Burns",
-  "bpm": 200.0,
+  "bpm": 150.0,
   "nodes": [
     {
-      "type": "PLASMA",
+      "type": "FIELD",
       "active": true,
-      "params": { "speed": 10.0, "scale": 1.0, "complexity": 4, "color_r": 255, "color_g": 80, "color_b": 0, "color2_r": 255, "color2_g": 0, "color2_b": 0, "color3_r": 255, "color3_g": 255, "color3_b": 0 }
+      "params": {
+        "type": 3,
+        "pulse_speed": 2.0,
+        "pulse_speed__anim": 1, "pulse_speed__amin": 0.5, "pulse_speed__amax": 5.0, "pulse_speed__aspd": 0.4, "pulse_speed__ashp": 1,
+        "color_r": 255, "color_g": 80, "color_b": 0,
+        "color2_r": 200, "color2_g": 0, "color2_b": 0
+      }
     },
     {
-      "type": "STROBE",
+      "type": "PTCL",
       "active": true,
-      "params": { "rate": 20.0, "duty": 0.1, "color_r": 255, "color_g": 255, "color_b": 255 }
+      "params": {
+        "gravity": -0.5,
+        "lifetime": 3.0,
+        "spread": 5.0, "burst": 20, "rate": 30.0,
+        "intensity": 2.0,
+        "intensity__anim": 1, "intensity__amin": 0.5, "intensity__amax": 2.5, "intensity__aspd": 1.2, "intensity__ashp": 0,
+        "reactive": 0,
+        "color_r": 255,
+        "color_r__anim": 1, "color_r__amin": 200, "color_r__amax": 255, "color_r__aspd": 0.5, "color_r__ashp": 2,
+        "color_g": 100,
+        "color_g__anim": 1, "color_g__amin": 0, "color_g__amax": 180, "color_g__aspd": 0.3, "color_g__ashp": 0,
+        "color_b": 0
+      }
     },
     {
       "type": "GLITCH",
       "active": true,
-      "params": { "intensity": 1.0, "block_size": 2, "color_shift": 20 }
-    },
-    {
-      "type": "FEED",
-      "active": true,
-      "params": { "decay": 0.90, "offset_x": 5, "offset_y": -5, "zoom": 1.1 }
+      "params": {
+        "intensity": 0.7,
+        "intensity__anim": 1, "intensity__amin": 0.1, "intensity__amax": 1.0, "intensity__aspd": 0.8, "intensity__ashp": 4,
+        "block_size": 10, "color_shift": 20
+      }
     },
     {
       "type": "CSHIFT",
       "active": true,
-      "params": { "hue_shift": 30.0, "saturation": 2.0, "brightness": 2.0 }
+      "params": {
+        "hue_shift": 20.0,
+        "hue_shift__anim": 1, "hue_shift__amin": 0.0, "hue_shift__amax": 50.0, "hue_shift__aspd": 0.5, "hue_shift__ashp": 0,
+        "saturation": 2.0, "brightness": 1.5
+      }
     }
   ]
 }

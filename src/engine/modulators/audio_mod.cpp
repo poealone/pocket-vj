@@ -38,7 +38,9 @@ void AudioModulator::feed(const FFTAnalyzer& fft) {
     m_output = m_smoothed;
 }
 
-void AudioModulator::update(float /*dt*/, float /*audioLevel*/) {
+void AudioModulator::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
     // feed() is called separately by main loop
 }
 

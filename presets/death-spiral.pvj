@@ -1,27 +1,53 @@
 {
   "version": 2,
   "name": "Death Spiral",
-  "bpm": 160.0,
+  "bpm": 140.0,
   "nodes": [
     {
-      "type": "TORUS",
+      "type": "TUNNEL",
       "active": true,
-      "params": { "major_r": 2.5, "minor_r": 0.15, "major_seg": 16, "minor_seg": 4, "rot_x": 45, "auto_rotate": 1, "rot_speed": 8.0, "wireframe": 1, "color_r": 255, "color_g": 0, "color_b": 80 }
+      "params": {
+        "speed": 5.0,
+        "speed__anim": 1, "speed__amin": 1.0, "speed__amax": 10.0, "speed__aspd": 0.25, "speed__ashp": 0,
+        "segments": 12,
+        "rotation": 0.0,
+        "rotation__anim": 1, "rotation__amin": 0.0, "rotation__amax": 360.0, "rotation__aspd": 0.1, "rotation__ashp": 2,
+        "color_r": 255, "color_g": 0, "color_b": 100,
+        "color2_r": 50, "color2_g": 0, "color2_b": 200
+      }
+    },
+    {
+      "type": "SHAPE",
+      "active": true,
+      "params": {
+        "shape": 1, "filled": 0,
+        "rot_speed": 8.0, "pulse_speed": 4.0,
+        "intensity": 1.2,
+        "intensity__anim": 1, "intensity__amin": 0.3, "intensity__amax": 2.0, "intensity__aspd": 1.0, "intensity__ashp": 0,
+        "reactive": 0,
+        "color_r": 255, "color_g": 100, "color_b": 0
+      }
     },
     {
       "type": "FEED",
       "active": true,
-      "params": { "decay": 0.96, "offset_x": 2, "offset_y": 1, "zoom": 1.02 }
-    },
-    {
-      "type": "GLITCH",
-      "active": true,
-      "params": { "intensity": 0.3, "block_size": 8, "color_shift": 10 }
+      "params": {
+        "decay": 0.88,
+        "offset_x": 0,
+        "offset_x__anim": 1, "offset_x__amin": -3, "offset_x__amax": 3, "offset_x__aspd": 0.2, "offset_x__ashp": 0,
+        "offset_y": 0,
+        "offset_y__anim": 1, "offset_y__amin": -3, "offset_y__amax": 3, "offset_y__aspd": 0.15, "offset_y__ashp": 0,
+        "zoom": 1.02
+      }
     },
     {
       "type": "CSHIFT",
       "active": true,
-      "params": { "hue_shift": 200.0, "saturation": 1.4, "brightness": 1.2 }
+      "params": {
+        "hue_shift": 0.0,
+        "hue_shift__anim": 1, "hue_shift__amin": 0.0, "hue_shift__amax": 360.0, "hue_shift__aspd": 0.2, "hue_shift__ashp": 0,
+        "saturation": 2.0, "brightness": 1.3
+      }
     }
   ]
 }

@@ -22,7 +22,10 @@ void EdgeNode::syncParams() {
     params.set("edge_color_b", (float)edge_b);
 }
 
-void EdgeNode::update(float /*dt*/, float /*audioLevel*/) {}
+void EdgeNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
+}
 
 static inline uint8_t luminance(uint32_t p) {
     uint8_t r = (p >> 16) & 0xFF;

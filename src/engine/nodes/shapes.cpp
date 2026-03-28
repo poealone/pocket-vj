@@ -44,6 +44,8 @@ void ShapesNode::syncParams() {
 }
 
 void ShapesNode::update(float dt, float audioLevel) {
+    params.animateAll(dt);
+    applyParams();
     rotation += rotSpeed * dt;
     m_pulse += pulseSpeed * dt;
 

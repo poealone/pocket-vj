@@ -39,6 +39,8 @@ void NoiseNode::syncParams() {
 }
 
 void NoiseNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
     m_time += dt * speed;
 }
 

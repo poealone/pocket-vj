@@ -1,27 +1,46 @@
 {
   "version": 2,
   "name": "Infinite Zoom",
-  "bpm": 130.0,
+  "bpm": 120.0,
   "nodes": [
     {
-      "type": "SHAPE",
+      "type": "NOISE",
       "active": true,
-      "params": { "shape": 3, "filled": 0, "rot_speed": 8.0, "pulse_speed": 6.0, "intensity": 2.0, "reactive": 1, "color_r": 255, "color_g": 255, "color_b": 255 }
+      "params": {
+        "scale": 50.0,
+        "scale__anim": 1, "scale__amin": 5.0, "scale__amax": 100.0, "scale__aspd": 0.4, "scale__ashp": 0,
+        "speed": 8.0, "octaves": 4,
+        "color_r": 100, "color_g": 150, "color_b": 200,
+        "color2_r": 200, "color2_g": 100, "color2_b": 0
+      }
     },
     {
       "type": "FEED",
       "active": true,
-      "params": { "decay": 0.97, "offset_x": 0, "offset_y": 0, "zoom": 0.92 }
-    },
-    {
-      "type": "CSHIFT",
-      "active": true,
-      "params": { "hue_shift": 15.0, "saturation": 1.6, "brightness": 1.1 }
+      "params": {
+        "decay": 0.97,
+        "offset_x": 0, "offset_y": 0,
+        "zoom": 1.02,
+        "zoom__anim": 1, "zoom__amin": 0.98, "zoom__amax": 1.08, "zoom__aspd": 0.3, "zoom__ashp": 0
+      }
     },
     {
       "type": "MIRROR",
       "active": true,
-      "params": { "axis": 2, "offset": 0.5 }
+      "params": {
+        "axis": 1,
+        "offset": 0.5,
+        "offset__anim": 1, "offset__amin": 0.2, "offset__amax": 0.8, "offset__aspd": 0.15, "offset__ashp": 1
+      }
+    },
+    {
+      "type": "CSHIFT",
+      "active": true,
+      "params": {
+        "hue_shift": 0.0,
+        "hue_shift__anim": 1, "hue_shift__amin": 0.0, "hue_shift__amax": 360.0, "hue_shift__aspd": 0.25, "hue_shift__ashp": 0,
+        "saturation": 1.6, "brightness": 1.2
+      }
     }
   ]
 }

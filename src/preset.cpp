@@ -57,6 +57,22 @@ bool save(const std::string& path,
             } else {
                 fprintf(f, ": %.4f", p.value);
             }
+
+            // Write animation fields if animated
+            if (p.animated) {
+                fprintf(f, ",\n        ");
+                writeJsonString(f, p.name + "__anim");
+                fprintf(f, ": 1,\n        ");
+                writeJsonString(f, p.name + "__amin");
+                fprintf(f, ": %.4f,\n        ", p.animMin);
+                writeJsonString(f, p.name + "__amax");
+                fprintf(f, ": %.4f,\n        ", p.animMax);
+                writeJsonString(f, p.name + "__aspd");
+                fprintf(f, ": %.4f,\n        ", p.animSpeed);
+                writeJsonString(f, p.name + "__ashp");
+                fprintf(f, ": %d", p.animShape);
+            }
+
             if (i < (int)plist.size() - 1) fprintf(f, ",");
             fprintf(f, "\n");
         }

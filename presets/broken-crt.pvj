@@ -6,27 +6,50 @@
     {
       "type": "NOISE",
       "active": true,
-      "params": { "scale": 100.0, "speed": 8.0, "octaves": 1, "color_r": 200, "color_g": 200, "color_b": 200, "color2_r": 0, "color2_g": 0, "color2_b": 0 }
+      "params": {
+        "scale": 40.0,
+        "scale__anim": 1, "scale__amin": 10.0, "scale__amax": 80.0, "scale__aspd": 0.15, "scale__ashp": 1,
+        "speed": 5.0, "octaves": 3,
+        "color_r": 150, "color_g": 180, "color_b": 130,
+        "color2_r": 0, "color2_g": 40, "color2_b": 0
+      }
     },
     {
       "type": "SCAN",
       "active": true,
-      "params": { "spacing": 1, "thickness": 1, "intensity": 0.9 }
+      "params": {
+        "spacing": 2, "thickness": 1,
+        "intensity": 0.6,
+        "intensity__anim": 1, "intensity__amin": 0.2, "intensity__amax": 0.8, "intensity__aspd": 0.5, "intensity__ashp": 3
+      }
     },
     {
       "type": "GLITCH",
       "active": true,
-      "params": { "intensity": 0.8, "block_size": 4, "color_shift": 15 }
+      "params": {
+        "intensity": 0.5,
+        "intensity__anim": 1, "intensity__amin": 0.0, "intensity__amax": 1.0, "intensity__aspd": 2.0, "intensity__ashp": 4,
+        "block_size": 12,
+        "block_size__anim": 1, "block_size__amin": 2, "block_size__amax": 32, "block_size__aspd": 0.8, "block_size__ashp": 4,
+        "color_shift": 15
+      }
     },
     {
-      "type": "BARS",
+      "type": "PIXEL",
       "active": true,
-      "params": { "bars": 64, "intensity": 0.4, "fall": 10.0, "gap": 0.0, "reactive": 1, "color_r": 0, "color_g": 255, "color_b": 0 }
+      "params": {
+        "block_size": 3,
+        "block_size__anim": 1, "block_size__amin": 2, "block_size__amax": 8, "block_size__aspd": 0.4, "block_size__ashp": 3
+      }
     },
     {
-      "type": "EDGE",
+      "type": "CSHIFT",
       "active": true,
-      "params": { "threshold": 30, "edge_color_r": 0, "edge_color_g": 200, "edge_color_b": 0 }
+      "params": {
+        "hue_shift": 100.0,
+        "hue_shift__anim": 1, "hue_shift__amin": 80.0, "hue_shift__amax": 140.0, "hue_shift__aspd": 0.3, "hue_shift__ashp": 4,
+        "saturation": 0.8, "brightness": 1.1
+      }
     }
   ]
 }

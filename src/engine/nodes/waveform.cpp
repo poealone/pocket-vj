@@ -47,6 +47,8 @@ void WaveformNode::setWaveData(const float* samples, int count) {
 }
 
 void WaveformNode::update(float dt, float audioLevel) {
+    params.animateAll(dt);
+    applyParams();
     m_phase += dt * speed;
 
     if (!reactive || audioLevel < 0.01f) {

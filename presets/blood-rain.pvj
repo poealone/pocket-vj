@@ -1,27 +1,51 @@
 {
   "version": 2,
   "name": "Blood Rain",
-  "bpm": 100.0,
+  "bpm": 90.0,
   "nodes": [
+    {
+      "type": "FIELD",
+      "active": true,
+      "params": {
+        "type": 0, "pulse_speed": 1.0,
+        "color_r": 30, "color_g": 0, "color_b": 0,
+        "color2_r": 80, "color2_g": 0, "color2_b": 10
+      }
+    },
     {
       "type": "PTCL",
       "active": true,
-      "params": { "gravity": 4.0, "lifetime": 3.0, "spread": 0.5, "burst": 1, "rate": 30.0, "intensity": 1.5, "reactive": 0, "color_r": 180, "color_g": 0, "color_b": 0 }
+      "params": {
+        "gravity": 3.0,
+        "lifetime": 4.0,
+        "spread": 8.0,
+        "spread__anim": 1, "spread__amin": 2.0, "spread__amax": 10.0, "spread__aspd": 0.2, "spread__ashp": 0,
+        "burst": 16, "rate": 20.0, "intensity": 1.5, "reactive": 0,
+        "color_r": 200,
+        "color_r__anim": 1, "color_r__amin": 120, "color_r__amax": 255, "color_r__aspd": 0.6, "color_r__ashp": 0,
+        "color_g": 0, "color_b": 0
+      }
     },
     {
-      "type": "NOISE",
+      "type": "SCAN",
       "active": true,
-      "params": { "scale": 60.0, "speed": 1.0, "octaves": 3, "color_r": 50, "color_g": 0, "color_b": 0, "color2_r": 0, "color2_g": 0, "color2_b": 0 }
+      "params": {
+        "spacing": 3,
+        "thickness": 1,
+        "intensity": 0.4,
+        "intensity__anim": 1, "intensity__amin": 0.1, "intensity__amax": 0.7, "intensity__aspd": 0.3, "intensity__ashp": 0
+      }
     },
     {
       "type": "FEED",
       "active": true,
-      "params": { "decay": 0.93, "offset_x": 0, "offset_y": 2, "zoom": 1.0 }
-    },
-    {
-      "type": "EDGE",
-      "active": true,
-      "params": { "threshold": 20, "edge_color_r": 255, "edge_color_g": 0, "edge_color_b": 0 }
+      "params": {
+        "decay": 0.92,
+        "offset_x": 0,
+        "offset_y": 1,
+        "offset_y__anim": 1, "offset_y__amin": -2, "offset_y__amax": 3, "offset_y__aspd": 0.15, "offset_y__ashp": 0,
+        "zoom": 1.0
+      }
     }
   ]
 }

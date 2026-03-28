@@ -17,7 +17,10 @@ void BlurNode::syncParams() {
     params.set("passes", (float)passes);
 }
 
-void BlurNode::update(float /*dt*/, float /*audioLevel*/) {}
+void BlurNode::update(float dt, float /*audioLevel*/) {
+    params.animateAll(dt);
+    applyParams();
+}
 
 void BlurNode::render(Renderer& r) {
     if (!active || radius < 1) return;

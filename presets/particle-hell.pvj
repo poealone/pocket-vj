@@ -1,27 +1,52 @@
 {
   "version": 2,
   "name": "Particle Hell",
-  "bpm": 180.0,
+  "bpm": 170.0,
   "nodes": [
     {
       "type": "PTCL",
       "active": true,
-      "params": { "gravity": 5.0, "lifetime": 0.4, "spread": 10.0, "burst": 32, "rate": 30.0, "intensity": 2.0, "reactive": 1, "color_r": 255, "color_g": 60, "color_b": 0 }
+      "params": {
+        "gravity": 2.0,
+        "gravity__anim": 1, "gravity__amin": -2.0, "gravity__amax": 4.0, "gravity__aspd": 0.2, "gravity__ashp": 0,
+        "lifetime": 2.0,
+        "spread": 10.0, "burst": 32,
+        "burst__anim": 1, "burst__amin": 8, "burst__amax": 32, "burst__aspd": 1.0, "burst__ashp": 1,
+        "rate": 40.0, "intensity": 2.0, "reactive": 0,
+        "color_r": 255,
+        "color_r__anim": 1, "color_r__amin": 100, "color_r__amax": 255, "color_r__aspd": 0.5, "color_r__ashp": 2,
+        "color_g": 100,
+        "color_g__anim": 1, "color_g__amin": 0, "color_g__amax": 200, "color_g__aspd": 0.4, "color_g__ashp": 0,
+        "color_b": 50
+      }
     },
     {
-      "type": "PTCL",
+      "type": "STROBE",
       "active": true,
-      "params": { "gravity": -5.0, "lifetime": 0.6, "spread": 8.0, "burst": 24, "rate": 25.0, "intensity": 2.0, "reactive": 1, "color_r": 0, "color_g": 200, "color_b": 255 }
+      "params": {
+        "rate": 10.0,
+        "rate__anim": 1, "rate__amin": 3.0, "rate__amax": 20.0, "rate__aspd": 0.6, "rate__ashp": 0,
+        "duty": 0.3,
+        "color_r": 255, "color_g": 255, "color_b": 255
+      }
     },
     {
-      "type": "FEED",
+      "type": "GLITCH",
       "active": true,
-      "params": { "decay": 0.92, "offset_x": 0, "offset_y": -1, "zoom": 1.03 }
+      "params": {
+        "intensity": 0.8,
+        "intensity__anim": 1, "intensity__amin": 0.1, "intensity__amax": 1.0, "intensity__aspd": 1.2, "intensity__ashp": 4,
+        "block_size": 6, "color_shift": 25
+      }
     },
     {
-      "type": "BLUR",
+      "type": "CSHIFT",
       "active": true,
-      "params": { "radius": 3, "passes": 2 }
+      "params": {
+        "hue_shift": 0.0,
+        "hue_shift__anim": 1, "hue_shift__amin": 0.0, "hue_shift__amax": 360.0, "hue_shift__aspd": 0.8, "hue_shift__ashp": 0,
+        "saturation": 2.0, "brightness": 1.5
+      }
     }
   ]
 }

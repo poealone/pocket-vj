@@ -74,6 +74,8 @@ void ParticlesNode::burst(int count) {
 }
 
 void ParticlesNode::update(float dt, float audioLevel) {
+    params.animateAll(dt);
+    applyParams();
     if (!active) return;
 
     if (m_autoRate > 0.0f) {
