@@ -17,6 +17,7 @@ public:
 
     // Menu items
     std::vector<std::string> items = {
+        "NEW PROJECT",
         "SAVE PRESET",
         "LOAD PRESET",
         "EXPORT .PDVIZ",

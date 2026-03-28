@@ -272,28 +272,48 @@ int main(int argc, char* argv[]) {
                 int sel = menu.selectedIndex();
                 menu.close();
                 switch (sel) {
-                    case 0: // SAVE PRESET
+                    case 0: // NEW PROJECT
+                    {
+                        // Clear all nodes from all layers
+                        for (int li = 0; li < layers.layerCount(); li++) {
+                            for (auto* node : layers.layer(li).nodes) {
+                                delete node;
+                            }
+                            layers.layer(li).nodes.clear();
+                            layers.layer(li).blend = BlendMode::NORMAL;
+                            layers.layer(li).opacity = 1.0f;
+                            layers.layer(li).mute = false;
+                            layers.layer(li).solo = false;
+                            layers.layer(li).name = "";
+                        }
+                        layers.layer(0).name = "Layer 1";
+                        layers.setCurrentLayer(0);
+                        pattern.setBpm(120.0f);
+                        allNodes = layers.allNodes();
+                        break;
+                    }
+                    case 1: // SAVE PRESET
                         ensurePresetsDir();
                         presetBrowser.open(PRESETS_DIR, true);
                         mode = AppMode::PRESET_BROWSER;
                         break;
-                    case 1: // LOAD PRESET
+                    case 2: // LOAD PRESET
                         ensurePresetsDir();
                         presetBrowser.open(PRESETS_DIR, false);
                         mode = AppMode::PRESET_BROWSER;
                         break;
-                    case 2: // EXPORT .PDVIZ
+                    case 3: // EXPORT .PDVIZ
                     {
                         ensurePresetsDir();
                         std::string pdvizPath = std::string(PRESETS_DIR) + "/export.pdviz";
                         PdViz::exportFile(pdvizPath, "Pocket VJ Export", layers);
                         break;
                     }
-                    case 3: // PERFORMANCE MODE
+                    case 4: // PERFORMANCE MODE
                         perfMode.init(&layers, &sceneManager, &bpmTap, &pattern, &recorder);
                         mode = AppMode::PERFORMANCE;
                         break;
-                    case 4: // RECORD
+                    case 5: // RECORD
                         if (recorder.isRecording()) {
                             recorder.stopRecording();
                             ensurePresetsDir();
@@ -302,17 +322,17 @@ int main(int argc, char* argv[]) {
                             recorder.startRecording();
                         }
                         break;
-                    case 5: // SCENES
+                    case 6: // SCENES
                         sceneMenuOpen = true;
                         sceneMenuCursor = sceneManager.currentScene();
                         break;
-                    case 6: // SETTINGS
+                    case 7: // SETTINGS
                         // TODO: settings menu
                         break;
-                    case 7: // ABOUT
+                    case 8: // ABOUT
                         // TODO: about screen
                         break;
-                    case 8: // EXIT
+                    case 9: // EXIT
                         running = false;
                         break;
                     default:
