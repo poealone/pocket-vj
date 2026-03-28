@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "Death Spiral",
+  "bpm": 160.0,
+  "nodes": [
+    {
+      "type": "TORUS",
+      "active": true,
+      "params": { "major_r": 2.5, "minor_r": 0.15, "major_seg": 16, "minor_seg": 4, "rot_x": 45, "auto_rotate": 1, "rot_speed": 8.0, "wireframe": 1, "color_r": 255, "color_g": 0, "color_b": 80 }
+    },
+    {
+      "type": "FEED",
+      "active": true,
+      "params": { "decay": 0.96, "offset_x": 2, "offset_y": 1, "zoom": 1.02 }
+    },
+    {
+      "type": "GLITCH",
+      "active": true,
+      "params": { "intensity": 0.3, "block_size": 8, "color_shift": 10 }
+    },
+    {
+      "type": "CSHIFT",
+      "active": true,
+      "params": { "hue_shift": 200.0, "saturation": 1.4, "brightness": 1.2 }
+    }
+  ]
+}

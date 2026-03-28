@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "Particle Hell",
+  "bpm": 180.0,
+  "nodes": [
+    {
+      "type": "PTCL",
+      "active": true,
+      "params": { "gravity": 5.0, "lifetime": 0.4, "spread": 10.0, "burst": 32, "rate": 30.0, "intensity": 2.0, "reactive": 1, "color_r": 255, "color_g": 60, "color_b": 0 }
+    },
+    {
+      "type": "PTCL",
+      "active": true,
+      "params": { "gravity": -5.0, "lifetime": 0.6, "spread": 8.0, "burst": 24, "rate": 25.0, "intensity": 2.0, "reactive": 1, "color_r": 0, "color_g": 200, "color_b": 255 }
+    },
+    {
+      "type": "FEED",
+      "active": true,
+      "params": { "decay": 0.92, "offset_x": 0, "offset_y": -1, "zoom": 1.03 }
+    },
+    {
+      "type": "BLUR",
+      "active": true,
+      "params": { "radius": 3, "passes": 2 }
+    }
+  ]
+}

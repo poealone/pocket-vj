@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "name": "Void Collapse",
+  "bpm": 60.0,
+  "nodes": [
+    {
+      "type": "FIELD",
+      "active": true,
+      "params": { "type": 3, "pulse_speed": 0.3, "color_r": 0, "color_g": 0, "color_b": 0, "color2_r": 15, "color2_g": 0, "color2_b": 30 }
+    },
+    {
+      "type": "SPHERE",
+      "active": true,
+      "params": { "radius": 4.0, "segments": 16, "auto_rotate": 1, "rot_speed": 0.3, "wireframe": 1, "color_r": 60, "color_g": 0, "color_b": 90 }
+    },
+    {
+      "type": "PTCL",
+      "active": true,
+      "params": { "gravity": -0.1, "lifetime": 8.0, "spread": 1.0, "burst": 2, "rate": 5.0, "intensity": 0.5, "reactive": 0, "color_r": 100, "color_g": 60, "color_b": 160 }
+    },
+    {
+      "type": "BLUR",
+      "active": true,
+      "params": { "radius": 6, "passes": 3 }
+    },
+    {
+      "type": "FEED",
+      "active": true,
+      "params": { "decay": 0.99, "offset_x": 0, "offset_y": 0, "zoom": 0.99 }
+    }
+  ]
+}

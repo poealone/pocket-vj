@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "name": "Crystal Skull",
+  "bpm": 125.0,
+  "nodes": [
+    {
+      "type": "MESH",
+      "active": true,
+      "params": { "scale": 5.0, "rot_x": 20, "rot_y": 0, "auto_rotate": 1, "rot_speed": 2.0, "wireframe": 1, "color_r": 200, "color_g": 200, "color_b": 255 }
+    },
+    {
+      "type": "TORUS",
+      "active": true,
+      "params": { "major_r": 3.0, "minor_r": 0.1, "major_seg": 12, "minor_seg": 4, "rot_x": 90, "auto_rotate": 1, "rot_speed": 1.5, "wireframe": 1, "color_r": 100, "color_g": 200, "color_b": 255 }
+    },
+    {
+      "type": "FEED",
+      "active": true,
+      "params": { "decay": 0.97, "offset_x": 0, "offset_y": 0, "zoom": 1.01 }
+    },
+    {
+      "type": "BLUR",
+      "active": true,
+      "params": { "radius": 2, "passes": 1 }
+    },
+    {
+      "type": "CSHIFT",
+      "active": true,
+      "params": { "hue_shift": 180.0, "saturation": 0.5, "brightness": 1.4 }
+    }
+  ]
+}

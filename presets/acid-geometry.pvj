@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "name": "Acid Geometry",
+  "bpm": 145.0,
+  "nodes": [
+    {
+      "type": "GRID",
+      "active": true,
+      "params": { "rows": 32, "cols": 32, "spacing": 8, "dot_size": 1, "wave_amt": 20.0, "wave_spd": 10.0, "color_r": 255, "color_g": 0, "color_b": 255 }
+    },
+    {
+      "type": "SHAPE",
+      "active": true,
+      "params": { "shape": 3, "filled": 0, "rot_speed": 10.0, "pulse_speed": 0.0, "intensity": 2.0, "reactive": 0, "color_r": 0, "color_g": 255, "color_b": 255 }
+    },
+    {
+      "type": "LASER",
+      "active": true,
+      "params": { "points": 16, "speed": 10.0, "decay": 0.0, "thickness": 1, "color_r": 255, "color_g": 255, "color_b": 0 }
+    },
+    {
+      "type": "MIRROR",
+      "active": true,
+      "params": { "axis": 2, "offset": 0.5 }
+    },
+    {
+      "type": "CSHIFT",
+      "active": true,
+      "params": { "hue_shift": 60.0, "saturation": 2.0, "brightness": 1.5 }
+    }
+  ]
+}

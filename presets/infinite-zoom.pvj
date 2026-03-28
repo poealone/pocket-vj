@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "Infinite Zoom",
+  "bpm": 130.0,
+  "nodes": [
+    {
+      "type": "SHAPE",
+      "active": true,
+      "params": { "shape": 3, "filled": 0, "rot_speed": 8.0, "pulse_speed": 6.0, "intensity": 2.0, "reactive": 1, "color_r": 255, "color_g": 255, "color_b": 255 }
+    },
+    {
+      "type": "FEED",
+      "active": true,
+      "params": { "decay": 0.97, "offset_x": 0, "offset_y": 0, "zoom": 0.92 }
+    },
+    {
+      "type": "CSHIFT",
+      "active": true,
+      "params": { "hue_shift": 15.0, "saturation": 1.6, "brightness": 1.1 }
+    },
+    {
+      "type": "MIRROR",
+      "active": true,
+      "params": { "axis": 2, "offset": 0.5 }
+    }
+  ]
+}

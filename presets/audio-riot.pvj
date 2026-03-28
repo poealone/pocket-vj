@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "name": "Audio Riot",
+  "bpm": 140.0,
+  "nodes": [
+    {
+      "type": "BARS",
+      "active": true,
+      "params": { "bars": 128, "intensity": 2.0, "fall": 0.5, "gap": 0.0, "reactive": 1, "color_r": 255, "color_g": 0, "color_b": 0 }
+    },
+    {
+      "type": "WAVE",
+      "active": true,
+      "params": { "thickness": 6, "speed": 5.0, "intensity": 2.0, "reactive": 1 }
+    },
+    {
+      "type": "PTCL",
+      "active": true,
+      "params": { "gravity": 0.0, "lifetime": 1.0, "spread": 10.0, "burst": 16, "rate": 20.0, "intensity": 2.0, "reactive": 1, "color_r": 255, "color_g": 255, "color_b": 0 }
+    },
+    {
+      "type": "AMOD",
+      "active": true,
+      "params": { "source": 4, "gain": 5.0, "smooth": 0.1 }
+    },
+    {
+      "type": "GLITCH",
+      "active": true,
+      "params": { "intensity": 0.5, "block_size": 3, "color_shift": 8 }
+    }
+  ]
+}

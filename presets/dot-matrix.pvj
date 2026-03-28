@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "Dot Matrix",
+  "bpm": 128.0,
+  "nodes": [
+    {
+      "type": "GRID",
+      "active": true,
+      "params": { "rows": 24, "cols": 32, "spacing": 10, "dot_size": 3, "wave_amt": 15.0, "wave_spd": 6.0, "color_r": 0, "color_g": 255, "color_b": 50 }
+    },
+    {
+      "type": "BARS",
+      "active": true,
+      "params": { "bars": 32, "intensity": 1.5, "fall": 8.0, "gap": 0.0, "reactive": 1, "color_r": 0, "color_g": 180, "color_b": 0 }
+    },
+    {
+      "type": "PIXEL",
+      "active": true,
+      "params": { "block_size": 4 }
+    },
+    {
+      "type": "SCAN",
+      "active": true,
+      "params": { "spacing": 2, "thickness": 1, "intensity": 0.7 }
+    }
+  ]
+}
