@@ -32,6 +32,7 @@ public:
     SDL_Window* window() { return m_window; }
     float deltaTime() const { return m_dt; }
     uint32_t frameCount() const { return m_frameCount; }
+    bool shouldQuit() const;
 
 private:
     SDL_Window*   m_window   = nullptr;
@@ -41,6 +42,7 @@ private:
 
     float    m_dt         = 0.0f;
     uint32_t m_lastTick   = 0;
+    uint32_t m_frameStart = 0;
     uint32_t m_frameCount = 0;
 
     void charGlyph(int x, int y, char ch, Color c, int scale);

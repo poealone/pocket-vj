@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
     bool running = true;
     while (running) {
         input.poll();
-        if (input.quit()) break;
+        if (input.quit() || renderer.shouldQuit()) break;
 
         float dt = renderer.deltaTime();
 

@@ -2,6 +2,11 @@
 #include <cstring>
 #include <cmath>
 #include <cstdlib>
+#include <csignal>
+
+// Global flag for clean shutdown on signal
+static volatile bool g_running = true;
+static void signalHandler(int) { g_running = false; }
 
 // Minimal 4x6 bitmap font (printable ASCII 32-126)
 static const uint8_t FONT_4X6[][6] = {
@@ -103,6 +108,10 @@ static const uint8_t FONT_4X6[][6] = {
 };
 
 bool Renderer::init() {
+    // Install signal handlers for clean shutdown
+    signal(SIGINT, signalHandler);
+    signal(SIGTERM, signalHandler);
+
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
         SDL_Log("SDL init failed: %s", SDL_GetError());
         return false;
@@ -113,22 +122,31 @@ bool Renderer::init() {
         SDL_JoystickOpen(0);
     }
 
+#ifdef MUOS_BUILD
+    // MUOS: fullscreen, no cursor
+    SDL_ShowCursor(SDL_DISABLE);
+    m_window = SDL_CreateWindow(
+        APP_NAME,
+        0, 0,
+        SCREEN_W, SCREEN_H,
+        SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_SHOWN
+    );
+#else
+    // Desktop: windowed for development
     m_window = SDL_CreateWindow(
         APP_NAME " v" APP_VERSION,
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         SCREEN_W, SCREEN_H,
         SDL_WINDOW_SHOWN
     );
+#endif
     if (!m_window) {
         SDL_Log("Window creation failed: %s", SDL_GetError());
         return false;
     }
 
-    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (!m_renderer) {
-        // Fallback to software
-        m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_SOFTWARE);
-    }
+    // Always use software renderer on MUOS (no GPU)
+    m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_SOFTWARE);
     if (!m_renderer) {
         SDL_Log("Renderer creation failed: %s", SDL_GetError());
         return false;
@@ -143,11 +161,16 @@ bool Renderer::init() {
     );
 
     m_pixels = new uint32_t[RENDER_W * RENDER_H];
+    memset(m_pixels, 0, RENDER_W * RENDER_H * sizeof(uint32_t));
     m_lastTick = SDL_GetTicks();
     m_frameCount = 0;
 
     SDL_Log("%s initialized (%dx%d render, %dx%d window)", APP_NAME, RENDER_W, RENDER_H, SCREEN_W, SCREEN_H);
     return true;
+}
+
+bool Renderer::shouldQuit() const {
+    return !g_running;
 }
 
 void Renderer::shutdown() {
@@ -159,8 +182,11 @@ void Renderer::shutdown() {
 }
 
 void Renderer::beginFrame() {
-    uint32_t now = SDL_GetTicks();
+    m_frameStart = SDL_GetTicks();
+    uint32_t now = m_frameStart;
     m_dt = (now - m_lastTick) / 1000.0f;
+    // Clamp dt to prevent spiral of death on slow frames
+    if (m_dt > 0.1f) m_dt = 0.1f;
     m_lastTick = now;
     clear();
 }
@@ -173,11 +199,11 @@ void Renderer::endFrame() {
     SDL_RenderPresent(m_renderer);
     m_frameCount++;
 
-    // Frame rate limiting
-    uint32_t frameTicks = SDL_GetTicks() - m_lastTick;
-    uint32_t targetTicks = 1000 / TARGET_FPS;
-    if (frameTicks < targetTicks) {
-        SDL_Delay(targetTicks - frameTicks);
+    // Strict frame rate limiting
+    uint32_t frameTime = SDL_GetTicks() - m_frameStart;
+    uint32_t targetTime = 1000 / TARGET_FPS;
+    if (frameTime < targetTime) {
+        SDL_Delay(targetTime - frameTime);
     }
 }
 
