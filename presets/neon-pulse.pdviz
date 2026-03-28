@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "name": "Neon Pulse",
+  "author": "WAValchemy",
+  "bpm_sync": true,
+  "resolution": [320, 240],
+  "layers": [
+    {
+      "type": "color_field",
+      "field_type": "gradient_v",
+      "color": [18, 18, 40],
+      "color2": [40, 10, 60]
+    },
+    {
+      "type": "bars",
+      "bars": 16,
+      "color": [255, 30, 60],
+      "reactive": true,
+      "position": { "x": 0, "y": 180, "w": 320, "h": 60 }
+    },
+    {
+      "type": "waveform",
+      "color": [60, 255, 180],
+      "thickness": 2,
+      "position": { "x": 0, "y": 80, "w": 320, "h": 80 }
+    },
+    {
+      "type": "particles",
+      "count": 32,
+      "color": [255, 255, 255],
+      "gravity": -0.5,
+      "lifetime": 2.0,
+      "trigger": "beat"
+    }
+  ],
+  "fx": [],
+  "sequence": [
+    { "step": 0, "layer": 1, "param": "color", "value": [255, 30, 60] },
+    { "step": 8, "layer": 1, "param": "color", "value": [60, 30, 255] }
+  ]
+}
