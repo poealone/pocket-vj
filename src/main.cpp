@@ -32,6 +32,11 @@
 #include "engine/modulators/lfo.h"
 #include "engine/modulators/envelope.h"
 #include "engine/modulators/audio_mod.h"
+#include "engine/3d/camera3d.h"
+#include "engine/nodes/mesh.h"
+#include "engine/nodes/cube.h"
+#include "engine/nodes/sphere.h"
+#include "engine/nodes/torus.h"
 #include "sequencer/pattern.h"
 #include "ui/tracker_view.h"
 #include "ui/preview.h"
@@ -92,6 +97,10 @@ static VisualNode* createNode(int typeId) {
         case 20: return new LFOModulator();
         case 21: return new EnvelopeModulator();
         case 22: return new AudioModulator();
+        case 23: return new MeshNode();
+        case 24: return new CubeNode();
+        case 25: return new SphereNode();
+        case 26: return new TorusNode();
         default: return nullptr;
     }
 }
@@ -121,6 +130,9 @@ int main(int argc, char* argv[]) {
     }
 
     ensurePresetsDir();
+
+    // --- 3D Camera ---
+    Camera3D camera3d;
 
     // --- Layer Manager ---
     LayerManager layers;
@@ -409,6 +421,11 @@ int main(int argc, char* argv[]) {
                         // Create and add new node to current layer
                         VisualNode* newNode = createNode(typeId);
                         if (newNode) {
+                            // Inject camera into 3D nodes
+                            if (auto* m = dynamic_cast<MeshNode*>(newNode))   m->setCamera(&camera3d);
+                            if (auto* m = dynamic_cast<CubeNode*>(newNode))   m->setCamera(&camera3d);
+                            if (auto* m = dynamic_cast<SphereNode*>(newNode)) m->setCamera(&camera3d);
+                            if (auto* m = dynamic_cast<TorusNode*>(newNode))  m->setCamera(&camera3d);
                             layers.addNode(newNode);
                         }
                         mode = AppMode::TRACKER;
@@ -486,6 +503,9 @@ int main(int argc, char* argv[]) {
                 allNodes[ev.nodeIndex]->setParam(ev.paramName, ev.value);
             }
         }
+
+        // Update 3D camera
+        camera3d.update(dt);
 
         // Update all nodes via layer manager
         layers.updateAll(dt, fft.level());

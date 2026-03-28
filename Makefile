@@ -40,6 +40,13 @@ SOURCES = \
 	src/engine/modulators/lfo.cpp \
 	src/engine/modulators/envelope.cpp \
 	src/engine/modulators/audio_mod.cpp \
+	src/engine/3d/rasterizer.cpp \
+	src/engine/3d/obj_loader.cpp \
+	src/engine/3d/camera3d.cpp \
+	src/engine/nodes/mesh.cpp \
+	src/engine/nodes/cube.cpp \
+	src/engine/nodes/sphere.cpp \
+	src/engine/nodes/torus.cpp \
 	src/sequencer/pattern.cpp \
 	src/ui/tracker_view.cpp \
 	src/ui/preview.cpp \

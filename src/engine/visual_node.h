@@ -5,7 +5,7 @@
 #include <string>
 
 // Node category for browser
-enum class NodeCategory { SOURCE, TRANSFORM, FX, MODULATOR };
+enum class NodeCategory { SOURCE, TRANSFORM, FX, MODULATOR, THREED };
 
 // Base class for all visual nodes
 class VisualNode {

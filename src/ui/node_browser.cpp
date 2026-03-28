@@ -26,6 +26,10 @@ enum NodeTypeId {
     NT_LFO,
     NT_ENVELOPE,
     NT_AUDIOMOD,
+    NT_MESH,
+    NT_CUBE,
+    NT_SPHERE,
+    NT_TORUS,
     NT_COUNT
 };
 
@@ -58,6 +62,11 @@ NodeBrowser::NodeBrowser() {
         {"LFO",      "LFO modulator",             NodeCategory::MODULATOR, NT_LFO},
         {"ENV",      "ADSR envelope",             NodeCategory::MODULATOR, NT_ENVELOPE},
         {"AMOD",     "Audio-reactive mod",        NodeCategory::MODULATOR, NT_AUDIOMOD},
+        // 3D nodes
+        {"MESH",     "3D mesh from .obj file",    NodeCategory::THREED, NT_MESH},
+        {"CUBE",     "3D rotating cube",          NodeCategory::THREED, NT_CUBE},
+        {"SPHERE",   "3D UV sphere",              NodeCategory::THREED, NT_SPHERE},
+        {"TORUS",    "3D torus / donut",          NodeCategory::THREED, NT_TORUS},
     };
 }
 
@@ -138,6 +147,7 @@ void NodeBrowser::render(Renderer& r) {
                 case NodeCategory::TRANSFORM: catName = "-- TRANSFORM --"; break;
                 case NodeCategory::FX:        catName = "-- FX --"; break;
                 case NodeCategory::MODULATOR: catName = "-- MODULATOR --"; break;
+                case NodeCategory::THREED:    catName = "-- 3D --"; break;
             }
             // Only show category header if it's the first entry of this cat in view
             if (i == m_scrollOffset || m_entries[i - 1].category != entry.category) {

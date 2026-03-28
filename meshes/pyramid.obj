@@ -1,0 +1,18 @@
+# Pyramid
+# 5 vertices, 6 triangles (4 sides + 2 for base)
+
+v  0.0  1.0  0.0
+v -1.0  0.0 -1.0
+v  1.0  0.0 -1.0
+v  1.0  0.0  1.0
+v -1.0  0.0  1.0
+
+# Side faces
+f 1 3 2
+f 1 4 3
+f 1 5 4
+f 1 2 5
+
+# Base (2 triangles)
+f 2 3 4
+f 2 4 5
