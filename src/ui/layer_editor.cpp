@@ -88,11 +88,11 @@ bool LayerEditor::update(Input& input, int& enterLayer) {
 void LayerEditor::render(Renderer& r) {
     if (!m_open || !m_mgr) return;
 
-    // Background
-    r.rect(0, 0, RENDER_W, RENDER_H, Palette::UI_BG, true);
+    // Semi-transparent overlay (visuals render behind from main.cpp)
+    r.rectAlpha(0, 0, RENDER_W, RENDER_H, {0, 0, 0, 160});
 
     // Header
-    r.rect(0, 0, RENDER_W, 9, {25, 15, 30}, true);
+    r.rectAlpha(0, 0, RENDER_W, 9, {25, 15, 30, 220});
     r.text(4, 1, "LAYERS", Palette::RED);
 
     if (m_adjustingOpacity) {
@@ -111,7 +111,7 @@ void LayerEditor::render(Renderer& r) {
 
         // Selection highlight
         if (sel) {
-            r.rect(0, drawY - 1, RENDER_W, rowH, {35, 20, 30}, true);
+            r.rectAlpha(0, drawY - 1, RENDER_W, rowH, {60, 20, 40, 180});
         }
 
         // Layer number
@@ -170,6 +170,6 @@ void LayerEditor::render(Renderer& r) {
     }
 
     // Help bar
-    r.rect(0, RENDER_H - 9, RENDER_W, 9, {10, 10, 16}, true);
+    r.rectAlpha(0, RENDER_H - 9, RENDER_W, 9, {0, 0, 0, 220});
     r.text(4, RENDER_H - 8, "A:EDIT X:BLEND Y:OPAC L:MUTE R:SOLO B:BACK", {100, 100, 110});
 }
