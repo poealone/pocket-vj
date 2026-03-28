@@ -106,91 +106,75 @@ bool NodeEditor::update(Input& input) {
     return false;
 }
 
-void NodeEditor::render(Renderer& r, const std::vector<VisualNode*>& nodes) {
+void NodeEditor::render(Renderer& r, const std::vector<VisualNode*>& /*nodes*/) {
     if (!m_open || !m_node) return;
 
     int paramCount = m_node->params.count();
 
-    // Background
-    r.rect(0, 0, RENDER_W, RENDER_H, Palette::UI_BG, true);
+    // Visuals are rendered BEFORE this call (in main.cpp) — we just draw the overlay
 
-    // Header
+    // Semi-transparent panel on the left side (half screen width)
+    int panelW = 200;
+    int panelH = RENDER_H;
+
+    // Darken the left panel area for readability
+    r.rectAlpha(0, 0, panelW, panelH, {0, 0, 0, 180});
+
+    // Header bar
     char header[64];
-    snprintf(header, sizeof(header), "EDIT > %s", m_node->typeName());
-    r.rect(0, 0, RENDER_W, 9, {25, 15, 30}, true);
-    r.text(4, 1, header, Palette::RED);
+    snprintf(header, sizeof(header), "%s", m_node->typeName());
+    r.rectAlpha(0, 0, panelW, 11, {20, 10, 30, 220});
+    r.text(4, 2, header, Palette::RED);
+
+    // Node index indicator (if in a layer with multiple nodes)
+    if (m_layers) {
+        auto& lnodes = m_layers->currentNodes();
+        int nodeIdx = -1;
+        for (int i = 0; i < (int)lnodes.size(); i++) {
+            if (lnodes[i] == m_node) { nodeIdx = i; break; }
+        }
+        if (nodeIdx >= 0 && lnodes.size() > 1) {
+            char idxBuf[16];
+            snprintf(idxBuf, sizeof(idxBuf), "%d/%d", nodeIdx + 1, (int)lnodes.size());
+            r.text(panelW - 30, 2, idxBuf, Palette::CYAN);
+        }
+    }
+
+    // Active toggle indicator
+    r.text(panelW - 50, 2, m_node->active ? "ON" : "OFF",
+           m_node->active ? Color(0, 255, 0) : Color(255, 60, 60));
 
     // Parameter list
-    int startY = 12;
-    int rowH = 10;
-    int listW = RENDER_W - 8;
+    int startY = 14;
+    int rowH = 11;
+    int listW = panelW - 8;
+    int maxVisible = (RENDER_H - startY - 12) / rowH;
+    if (maxVisible > paramCount) maxVisible = paramCount;
 
-    for (int i = 0; i < VISIBLE_ROWS && (m_scrollOffset + i) < paramCount; i++) {
+    for (int i = 0; i < maxVisible && (m_scrollOffset + i) < paramCount; i++) {
         int idx = m_scrollOffset + i;
         int py = startY + i * rowH;
         bool sel = (idx == m_cursor);
 
         if (sel) {
-            r.rect(0, py - 1, RENDER_W, rowH, {35, 25, 35}, true);
+            r.rectAlpha(0, py - 1, panelW, rowH, {60, 20, 40, 200});
         }
 
         Widgets::drawParam(r, 4, py, listW, m_node->params.at(idx), sel);
     }
 
-    // Scrollbar
-    if (paramCount > VISIBLE_ROWS) {
-        int barH = VISIBLE_ROWS * rowH;
+    // Scrollbar (if needed)
+    if (paramCount > maxVisible) {
+        int barH = maxVisible * rowH;
         int barY = startY;
-        float ratio = (float)m_scrollOffset / std::max(1, paramCount - VISIBLE_ROWS);
-        int thumbH = std::max(6, barH * VISIBLE_ROWS / paramCount);
+        float ratio = (float)m_scrollOffset / std::max(1, paramCount - maxVisible);
+        int thumbH = std::max(6, barH * maxVisible / paramCount);
         int thumbY = barY + (int)(ratio * (barH - thumbH));
-        r.rect(RENDER_W - 3, barY, 2, barH, {30, 30, 40}, true);
-        r.rect(RENDER_W - 3, thumbY, 2, thumbH, Palette::UI_FG, true);
+        r.rect(panelW - 3, barY, 2, barH, {30, 30, 40}, true);
+        r.rect(panelW - 3, thumbY, 2, thumbH, Palette::UI_FG, true);
     }
 
-    // Mini preview at bottom
-    int previewY = RENDER_H - PREVIEW_H - 10;
-    r.rect(0, previewY - 1, RENDER_W, 1, Palette::GRID, true);
-    r.text(4, previewY + 1, "PREVIEW", {80, 80, 90});
-
-    // Render all nodes in the mini preview area
-    // (they render at their own coordinates — this is a live view)
-    // Simple: just render nodes in the bottom strip area
-    // The nodes render at their configured positions so this shows a slice
-    for (auto* node : nodes) {
-        if (node && node->active) {
-            node->render(r);
-        }
-    }
-    // Dark overlay on non-preview area to keep param list readable
-    r.rect(0, 0, RENDER_W, previewY - 1, Palette::UI_BG, true);
-    // Re-render the header and params on top
-    r.rect(0, 0, RENDER_W, 9, {25, 15, 30}, true);
-    r.text(4, 1, header, Palette::RED);
-
-    for (int i = 0; i < VISIBLE_ROWS && (m_scrollOffset + i) < paramCount; i++) {
-        int idx = m_scrollOffset + i;
-        int py = startY + i * rowH;
-        bool sel = (idx == m_cursor);
-
-        if (sel) {
-            r.rect(0, py - 1, RENDER_W, rowH, {35, 25, 35}, true);
-        }
-        Widgets::drawParam(r, 4, py, listW, m_node->params.at(idx), sel);
-    }
-
-    // Re-render scrollbar
-    if (paramCount > VISIBLE_ROWS) {
-        int barH = VISIBLE_ROWS * rowH;
-        int barY = startY;
-        float ratio = (float)m_scrollOffset / std::max(1, paramCount - VISIBLE_ROWS);
-        int thumbH = std::max(6, barH * VISIBLE_ROWS / paramCount);
-        int thumbY = barY + (int)(ratio * (barH - thumbH));
-        r.rect(RENDER_W - 3, barY, 2, barH, {30, 30, 40}, true);
-        r.rect(RENDER_W - 3, thumbY, 2, thumbH, Palette::UI_FG, true);
-    }
-
-    // Help bar
-    r.rect(0, RENDER_H - 9, RENDER_W, 9, {10, 10, 16}, true);
-    r.text(4, RENDER_H - 8, "L/R:NODE <>:ADJ A+<>:FINE X:DEL B:BACK", {100, 100, 110});
+    // Help bar at bottom
+    r.rectAlpha(0, RENDER_H - 10, panelW, 10, {0, 0, 0, 220});
+    r.text(2, RENDER_H - 9, "LR:NOD <>:ADJ X:DEL B:BACK", {100, 100, 120});
 }

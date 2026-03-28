@@ -257,6 +257,28 @@ void Renderer::rect(int x, int y, int w, int h, Color c, bool filled) {
     }
 }
 
+void Renderer::rectAlpha(int x, int y, int w, int h, Color c) {
+    uint8_t a = c.a;
+    if (a == 255) { rect(x, y, w, h, c, true); return; }
+    if (a == 0) return;
+
+    uint8_t inv = 255 - a;
+    for (int iy = y; iy < y + h; iy++) {
+        if (iy < 0 || iy >= RENDER_H) continue;
+        for (int ix = x; ix < x + w; ix++) {
+            if (ix < 0 || ix >= RENDER_W) continue;
+            uint32_t dst = m_pixels[iy * RENDER_W + ix];
+            uint8_t dr = (dst >> 16) & 0xFF;
+            uint8_t dg = (dst >> 8) & 0xFF;
+            uint8_t db = dst & 0xFF;
+            uint8_t nr = (c.r * a + dr * inv) / 255;
+            uint8_t ng = (c.g * a + dg * inv) / 255;
+            uint8_t nb = (c.b * a + db * inv) / 255;
+            m_pixels[iy * RENDER_W + ix] = (255u << 24) | (nr << 16) | (ng << 8) | nb;
+        }
+    }
+}
+
 void Renderer::circle(int cx, int cy, int r, Color c, bool filled) {
     // Midpoint circle
     int x = r, y = 0, d = 1 - r;

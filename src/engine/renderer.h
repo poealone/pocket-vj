@@ -16,6 +16,7 @@ public:
     void pixel(int x, int y, Color c);
     void line(int x1, int y1, int x2, int y2, Color c);
     void rect(int x, int y, int w, int h, Color c, bool filled = true);
+    void rectAlpha(int x, int y, int w, int h, Color c);  // Filled rect with alpha blending
     void circle(int cx, int cy, int r, Color c, bool filled = true);
 
     // Bar rendering (for spectrum bars)

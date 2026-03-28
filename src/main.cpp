@@ -647,6 +647,7 @@ int main(int argc, char* argv[]) {
                 break;
 
             case AppMode::NODE_EDITOR:
+                layers.renderAll(renderer);  // Live visuals behind the overlay
                 nodeEditor.render(renderer, allNodes);
                 break;
 
