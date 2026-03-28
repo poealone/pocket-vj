@@ -1,0 +1,48 @@
+{
+  "version": 2,
+  "name": "Vaporwave",
+  "bpm": 95.0,
+  "nodes": [
+    {
+      "type": "GRID",
+      "active": true,
+      "params": {
+        "rows": 12,
+        "cols": 16,
+        "spacing": 16,
+        "dot_size": 1,
+        "wave_amt": 6.0,
+        "wave_spd": 1.5,
+        "color_r": 255,
+        "color_g": 100,
+        "color_b": 200
+      }
+    },
+    {
+      "type": "SPHERE",
+      "active": true,
+      "params": {
+        "radius": 2.0,
+        "segments": 10,
+        "rot_x": 15.0,
+        "rot_y": 0.0,
+        "rot_z": 0.0,
+        "auto_rotate": 1,
+        "rot_speed": 0.8,
+        "wireframe": 1,
+        "color_r": 0,
+        "color_g": 220,
+        "color_b": 200
+      }
+    },
+    {
+      "type": "CSHIFT",
+      "active": true,
+      "params": {
+        "hue_shift": 200.0,
+        "saturation": 1.5,
+        "brightness": 1.0
+      }
+    }
+  ]
+}

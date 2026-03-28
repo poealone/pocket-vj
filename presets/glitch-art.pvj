@@ -1,0 +1,47 @@
+{
+  "version": 2,
+  "name": "Glitch Art",
+  "bpm": 130.0,
+  "nodes": [
+    {
+      "type": "BARS",
+      "active": true,
+      "params": {
+        "bars": 32,
+        "intensity": 1.0,
+        "fall": 6.0,
+        "gap": 1.0,
+        "reactive": 1,
+        "color_r": 200,
+        "color_g": 200,
+        "color_b": 200
+      }
+    },
+    {
+      "type": "GLITCH",
+      "active": true,
+      "params": {
+        "intensity": 0.85,
+        "block_size": 4,
+        "color_shift": 18
+      }
+    },
+    {
+      "type": "PIXEL",
+      "active": true,
+      "params": {
+        "block_size": 3
+      }
+    },
+    {
+      "type": "EDGE",
+      "active": true,
+      "params": {
+        "threshold": 50,
+        "edge_color_r": 180,
+        "edge_color_g": 255,
+        "edge_color_b": 180
+      }
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "name": "Acid Trip",
+  "bpm": 140.0,
+  "nodes": [
+    {
+      "type": "PLASMA",
+      "active": true,
+      "params": {
+        "speed": 5.0,
+        "scale": 20.0,
+        "complexity": 4,
+        "color_r": 255,
+        "color_g": 0,
+        "color_b": 100,
+        "color2_r": 0,
+        "color2_g": 255,
+        "color2_b": 50,
+        "color3_r": 100,
+        "color3_g": 0,
+        "color3_b": 255
+      }
+    },
+    {
+      "type": "CSHIFT",
+      "active": true,
+      "params": {
+        "hue_shift": 120.0,
+        "saturation": 1.8,
+        "brightness": 1.2
+      }
+    },
+    {
+      "type": "MIRROR",
+      "active": true,
+      "params": {
+        "axis": 2,
+        "offset": 0.5
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "name": "Zen Garden",
+  "bpm": 70.0,
+  "nodes": [
+    {
+      "type": "NOISE",
+      "active": true,
+      "params": {
+        "scale": 50.0,
+        "speed": 0.5,
+        "octaves": 2,
+        "color_r": 80,
+        "color_g": 70,
+        "color_b": 50,
+        "color2_r": 140,
+        "color2_g": 120,
+        "color2_b": 80
+      }
+    },
+    {
+      "type": "PTCL",
+      "active": true,
+      "params": {
+        "gravity": -0.2,
+        "lifetime": 6.0,
+        "spread": 2.0,
+        "burst": 3,
+        "rate": 4.0,
+        "intensity": 0.5,
+        "reactive": 0,
+        "color_r": 200,
+        "color_g": 180,
+        "color_b": 140
+      }
+    },
+    {
+      "type": "BLUR",
+      "active": true,
+      "params": {
+        "radius": 5,
+        "passes": 3
+      }
+    }
+  ]
+}

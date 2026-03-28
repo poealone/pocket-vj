@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "name": "Star Burst",
+  "bpm": 105.0,
+  "nodes": [
+    {
+      "type": "STAR",
+      "active": true,
+      "params": {
+        "stars": 128,
+        "speed": 6.0,
+        "depth": 70.0,
+        "color_r": 255,
+        "color_g": 255,
+        "color_b": 220
+      }
+    },
+    {
+      "type": "PTCL",
+      "active": true,
+      "params": {
+        "gravity": 0.0,
+        "lifetime": 1.0,
+        "spread": 8.0,
+        "burst": 24,
+        "rate": 10.0,
+        "intensity": 1.8,
+        "reactive": 1,
+        "color_r": 255,
+        "color_g": 220,
+        "color_b": 100
+      }
+    },
+    {
+      "type": "BLUR",
+      "active": true,
+      "params": {
+        "radius": 2,
+        "passes": 2
+      }
+    }
+  ]
+}
