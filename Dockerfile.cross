@@ -1,0 +1,11 @@
+FROM debian:bookworm
+
+RUN dpkg --add-architecture arm64 && \
+    apt-get update && \
+    apt-get install -y \
+    crossbuild-essential-arm64 \
+    libsdl2-dev:arm64 \
+    make \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
