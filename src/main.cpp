@@ -4,6 +4,9 @@
 #include "engine/visual_node.h"
 #include "engine/layer.h"
 #include "engine/sprite.h"
+#include "engine/scene.h"
+#include "engine/bpm.h"
+#include "engine/recorder.h"
 #include "engine/nodes/bars.h"
 #include "engine/nodes/waveform.h"
 #include "engine/nodes/shapes.h"
@@ -37,6 +40,8 @@
 #include "ui/node_browser.h"
 #include "ui/layer_editor.h"
 #include "ui/file_browser.h"
+#include "ui/performance.h"
+#include "export/pdviz.h"
 #include "preset.h"
 
 #include <vector>
@@ -178,6 +183,12 @@ int main(int argc, char* argv[]) {
     Pattern pattern(16);
     pattern.setBpm(120.0f);
 
+    // --- Phase 5: Scene, BPM, Recorder, Performance ---
+    SceneManager sceneManager;
+    BpmTap bpmTap;
+    Recorder recorder;
+    PerformanceMode perfMode;
+
     // --- UI ---
     TrackerView tracker;
     PreviewPanel preview;
@@ -188,6 +199,10 @@ int main(int argc, char* argv[]) {
     LayerEditor layerEditor;
     FileBrowser fileBrowser;
     AppMode mode = AppMode::TRACKER;
+
+    // Scene management sub-state
+    bool sceneMenuOpen = false;
+    int sceneMenuCursor = 0;
 
     char statusBuf[128];
 
@@ -218,7 +233,28 @@ int main(int argc, char* argv[]) {
         }
 
         // --- Handle mode-specific input ---
-        if (menu.isOpen()) {
+        if (sceneMenuOpen) {
+            // Scene management overlay
+            if (input.pressed(Button::UP)) {
+                sceneMenuCursor = (sceneMenuCursor - 1 + MAX_SCENES) % MAX_SCENES;
+            }
+            if (input.pressed(Button::DOWN)) {
+                sceneMenuCursor = (sceneMenuCursor + 1) % MAX_SCENES;
+            }
+            if (input.pressed(Button::A)) {
+                // Save current state to this scene slot
+                sceneManager.saveScene(sceneMenuCursor, layers);
+            }
+            if (input.pressed(Button::X)) {
+                // Load this scene slot
+                if (sceneManager.hasScene(sceneMenuCursor)) {
+                    sceneManager.loadScene(sceneMenuCursor, layers);
+                }
+            }
+            if (input.pressed(Button::B)) {
+                sceneMenuOpen = false;
+            }
+        } else if (menu.isOpen()) {
             menu.update(input);
             if (input.pressed(Button::A)) {
                 int sel = menu.selectedIndex();
@@ -234,7 +270,31 @@ int main(int argc, char* argv[]) {
                         presetBrowser.open(PRESETS_DIR, false);
                         mode = AppMode::PRESET_BROWSER;
                         break;
-                    case 5: // EXIT
+                    case 2: // EXPORT .PDVIZ
+                    {
+                        ensurePresetsDir();
+                        std::string pdvizPath = std::string(PRESETS_DIR) + "/export.pdviz";
+                        PdViz::exportFile(pdvizPath, "Pocket VJ Export", layers);
+                        break;
+                    }
+                    case 3: // PERFORMANCE MODE
+                        perfMode.init(&layers, &sceneManager, &bpmTap, &pattern, &recorder);
+                        mode = AppMode::PERFORMANCE;
+                        break;
+                    case 4: // RECORD
+                        if (recorder.isRecording()) {
+                            recorder.stopRecording();
+                            ensurePresetsDir();
+                            recorder.saveRecording(std::string(PRESETS_DIR) + "/recording.pvjr");
+                        } else {
+                            recorder.startRecording();
+                        }
+                        break;
+                    case 5: // SCENES
+                        sceneMenuOpen = true;
+                        sceneMenuCursor = sceneManager.currentScene();
+                        break;
+                    case 8: // EXIT (was 5, now 8)
                         running = false;
                         break;
                     default:
@@ -245,10 +305,18 @@ int main(int argc, char* argv[]) {
             switch (mode) {
                 case AppMode::TRACKER:
                     if (input.pressed(Button::SELECT)) {
-                        menu.open();
+                        // Check if Start is also held → enter performance mode
+                        if (input.held(Button::START)) {
+                            perfMode.init(&layers, &sceneManager, &bpmTap, &pattern, &recorder);
+                            mode = AppMode::PERFORMANCE;
+                        } else {
+                            menu.open();
+                        }
                     }
                     if (input.pressed(Button::START)) {
-                        pattern.togglePlaying();
+                        if (!input.held(Button::SELECT)) {
+                            pattern.togglePlaying();
+                        }
                     }
                     // L/R → switch active layer
                     if (input.pressed(Button::L)) {
@@ -275,6 +343,17 @@ int main(int argc, char* argv[]) {
                     if (input.pressed(Button::X)) {
                         nodeBrowser.open();
                         mode = AppMode::NODE_BROWSER;
+                    }
+
+                    // L2 → toggle recording
+                    if (input.pressed(Button::L2)) {
+                        if (recorder.isRecording()) {
+                            recorder.stopRecording();
+                            ensurePresetsDir();
+                            recorder.saveRecording(std::string(PRESETS_DIR) + "/recording.pvjr");
+                        } else {
+                            recorder.startRecording();
+                        }
                     }
 
                     tracker.update(input, pattern);
@@ -370,8 +449,6 @@ int main(int argc, char* argv[]) {
                 case AppMode::FILE_BROWSER: {
                     std::string result = fileBrowser.update(input);
                     if (!result.empty()) {
-                        // File selected — currently used for sprite loading
-                        // TODO: connect to particle sprite selection
                         mode = AppMode::TRACKER;
                     } else if (fileBrowser.cancelled()) {
                         mode = AppMode::TRACKER;
@@ -379,9 +456,24 @@ int main(int argc, char* argv[]) {
                     break;
                 }
 
-                case AppMode::PERFORMANCE:
-                    if (input.pressed(Button::B)) mode = AppMode::TRACKER;
+                case AppMode::PERFORMANCE: {
+                    bool exitPerf = perfMode.update(input);
+                    if (exitPerf) {
+                        mode = AppMode::TRACKER;
+                    }
+
+                    // L2 → toggle recording in performance mode too
+                    if (input.pressed(Button::L2)) {
+                        if (recorder.isRecording()) {
+                            recorder.stopRecording();
+                            ensurePresetsDir();
+                            recorder.saveRecording(std::string(PRESETS_DIR) + "/recording.pvjr");
+                        } else {
+                            recorder.startRecording();
+                        }
+                    }
                     break;
+                }
             }
         }
 
@@ -403,8 +495,12 @@ int main(int argc, char* argv[]) {
 
         switch (mode) {
             case AppMode::PREVIEW:
+                layers.renderAll(renderer);
+                break;
+
             case AppMode::PERFORMANCE:
                 layers.renderAll(renderer);
+                perfMode.renderOverlay(renderer);
                 break;
 
             case AppMode::LAYER_EDITOR:
@@ -445,11 +541,54 @@ int main(int argc, char* argv[]) {
                 );
                 renderer.rect(0, RENDER_H - 10, RENDER_W, 10, {10, 10, 16}, true);
                 renderer.text(2, RENDER_H - 9, statusBuf, Palette::UI_FG);
+
+                // Recording indicator
+                if (recorder.isRecording()) {
+                    renderer.circle(RENDER_W - 8, RENDER_H - 5, 3, {255, 0, 0}, true);
+                }
                 break;
+        }
+
+        // Scene management overlay (drawn on top of everything if open)
+        if (sceneMenuOpen) {
+            int sx = 50, sy = 30, sw = 220, sh = 180;
+            renderer.rect(sx, sy, sw, sh, {10, 10, 16}, true);
+            renderer.rect(sx, sy, sw, sh, Palette::UI_FG, false);
+            renderer.textCentered(sy + 4, "SCENES", Palette::RED);
+            renderer.line(sx + 8, sy + 16, sx + sw - 8, sy + 16, Palette::GRID);
+
+            for (int i = 0; i < MAX_SCENES; i++) {
+                int iy = sy + 22 + i * 16;
+                bool sel = (i == sceneMenuCursor);
+                bool hasData = sceneManager.hasScene(i);
+
+                if (sel) {
+                    renderer.rect(sx + 2, iy - 2, sw - 4, 14, {40, 20, 30}, true);
+                }
+
+                char sbuf[64];
+                snprintf(sbuf, sizeof(sbuf), "%s %d: %s",
+                         sel ? ">" : " ", i + 1,
+                         hasData ? sceneManager.scene(i).name.c_str() : "[empty]");
+                Color sc = sel ? Palette::RED : (hasData ? Palette::UI_FG : Palette::GRID);
+                renderer.text(sx + 8, iy, sbuf, sc);
+
+                if (hasData && sceneManager.currentScene() == i) {
+                    renderer.text(sx + sw - 24, iy, "<-", Palette::CYAN);
+                }
+            }
+
+            renderer.rect(sx, sy + sh - 14, sw, 14, {10, 10, 16}, true);
+            renderer.text(sx + 4, sy + sh - 12, "A:SAVE  X:LOAD  B:BACK", Palette::GRID);
         }
 
         // Menu overlay (on top of everything)
         menu.render(renderer);
+
+        // Capture frame for recording (after all rendering)
+        if (recorder.isRecording()) {
+            recorder.captureFrame(renderer.pixels());
+        }
 
         renderer.endFrame();
     }

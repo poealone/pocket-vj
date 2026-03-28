@@ -20,6 +20,9 @@ public:
         "SAVE PRESET",
         "LOAD PRESET",
         "EXPORT .PDVIZ",
+        "PERFORMANCE MODE",
+        "RECORD",
+        "SCENES",
         "SETTINGS",
         "ABOUT",
         "EXIT"

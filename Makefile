@@ -48,7 +48,12 @@ SOURCES = \
 	src/ui/node_editor.cpp \
 	src/ui/node_browser.cpp \
 	src/ui/layer_editor.cpp \
-	src/ui/file_browser.cpp
+	src/ui/file_browser.cpp \
+	src/ui/performance.cpp \
+	src/engine/scene.cpp \
+	src/engine/bpm.cpp \
+	src/engine/recorder.cpp \
+	src/export/pdviz.cpp
 
 OBJECTS = $(SOURCES:.cpp=.o)
 TARGET = pocket-vj
