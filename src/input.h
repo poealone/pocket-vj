@@ -27,6 +27,7 @@ struct InputState {
 
 class Input {
 public:
+    bool init();
     void poll();
     const InputState& state() const { return m_state; }
 
@@ -37,9 +38,10 @@ public:
 
 private:
     InputState m_state;
+    SDL_GameController* m_controller = nullptr;
 
     // Keyboard mapping (desktop dev)
     Button keyToButton(SDL_Keycode key);
-    // Gamepad mapping (MUOS/RG35XX)
-    Button padToButton(uint8_t btn);
+
+    void handleControllerButton(int sdlButton, bool down);
 };

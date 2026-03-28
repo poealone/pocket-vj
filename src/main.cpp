@@ -31,6 +31,7 @@ int main(int argc, char* argv[]) {
     }
 
     Input input;
+    input.init();
     FFTAnalyzer fft;
     fft.init();
 
