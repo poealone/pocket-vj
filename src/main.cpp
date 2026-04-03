@@ -250,6 +250,25 @@ int main(int argc, char* argv[]) {
             }
         }
 
+        // --- Global music controls (work in any mode) ---
+        if (mode != AppMode::MUSIC_BROWSER) {
+            // R2 = play/pause toggle
+            if (input.pressed(Button::R2)) {
+                if (musicPlayer.isLoaded()) {
+                    musicPlayer.togglePause();
+                }
+            }
+            // L2+R2 = stop music (both held, R2 just pressed)
+            if (input.pressed(Button::R2) && input.held(Button::L2)) {
+                musicPlayer.stop();
+            }
+            // L2+Up/Down = volume
+            if (input.held(Button::L2)) {
+                if (input.pressed(Button::UP))   musicPlayer.volumeUp();
+                if (input.pressed(Button::DOWN))  musicPlayer.volumeDown();
+            }
+        }
+
         // --- Handle mode-specific input ---
         if (sceneMenuOpen) {
             // Scene management overlay
@@ -756,6 +775,22 @@ int main(int argc, char* argv[]) {
 
             renderer.rect(sx, sy + sh - 14, sw, 14, {10, 10, 16}, true);
             renderer.text(sx + 4, sy + sh - 12, "A:SAVE  X:LOAD  B:BACK", Palette::GRID);
+        }
+
+        // Music mini-bar overlay (top-right, always visible when music loaded)
+        if (musicPlayer.isLoaded() && mode != AppMode::MUSIC_BROWSER) {
+            std::string mTitle = musicPlayer.currentTitle();
+            if (mTitle.size() > 14) mTitle = mTitle.substr(0, 12) + "..";
+            const char* mSym = musicPlayer.isPlaying() ? "\x10" : // ► char
+                               (musicPlayer.isPaused() ? "||" : "[]");
+            char mBuf[32];
+            snprintf(mBuf, sizeof(mBuf), "%s %s", mSym, mTitle.c_str());
+            int barW = (int)strlen(mBuf) * 4 + 8;
+            renderer.rectAlpha(RENDER_W - barW, 0, barW, 10, {0, 0, 0, 180});
+            renderer.text(RENDER_W - barW + 3, 1, mBuf,
+                          musicPlayer.isPlaying() ? Color(0, 255, 150) :
+                          musicPlayer.isPaused()  ? Color(255, 200, 0) :
+                                                    Color(150, 150, 150));
         }
 
         // Menu overlay (on top of everything)
