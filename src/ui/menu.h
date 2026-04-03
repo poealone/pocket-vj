@@ -17,16 +17,17 @@ public:
 
     // Menu items
     std::vector<std::string> items = {
-        "NEW PROJECT",
-        "SAVE PRESET",
-        "LOAD PRESET",
-        "EXPORT .PDVIZ",
-        "PERFORMANCE MODE",
-        "RECORD",
-        "SCENES",
-        "SETTINGS",
-        "ABOUT",
-        "EXIT"
+        "NEW PROJECT",   // 0
+        "MUSIC",         // 1
+        "SAVE PRESET",   // 2
+        "LOAD PRESET",   // 3
+        "EXPORT .PDVIZ", // 4
+        "PERFORMANCE MODE", // 5
+        "RECORD",        // 6
+        "SCENES",        // 7
+        "SETTINGS",      // 8
+        "ABOUT",         // 9
+        "EXIT"           // 10
     };
 
 private:

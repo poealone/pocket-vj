@@ -46,6 +46,8 @@
 #include "ui/layer_editor.h"
 #include "ui/file_browser.h"
 #include "ui/performance.h"
+#include "ui/music_browser.h"
+#include "audio/music_player.h"
 #include "export/pdviz.h"
 #include "preset.h"
 
@@ -61,6 +63,7 @@ enum class AppMode {
     PRESET_BROWSER, // Save/load presets
     LAYER_EDITOR,   // Layer management
     FILE_BROWSER,   // File browser for sprites/assets
+    MUSIC_BROWSER,  // Audio file browser for background music
     PERFORMANCE     // Live FX mode (Phase 5)
 };
 
@@ -210,6 +213,9 @@ int main(int argc, char* argv[]) {
     PresetBrowser presetBrowser;
     LayerEditor layerEditor;
     FileBrowser fileBrowser;
+    MusicBrowser musicBrowser;
+    MusicPlayer musicPlayer;
+    musicPlayer.init();
     AppMode mode = AppMode::TRACKER;
 
     // Scene management sub-state
@@ -292,28 +298,32 @@ int main(int argc, char* argv[]) {
                         allNodes = layers.allNodes();
                         break;
                     }
-                    case 1: // SAVE PRESET
+                    case 1: // MUSIC
+                        musicBrowser.open("/mnt/mmc");
+                        mode = AppMode::MUSIC_BROWSER;
+                        break;
+                    case 2: // SAVE PRESET
                         ensurePresetsDir();
                         presetBrowser.open(PRESETS_DIR, true);
                         mode = AppMode::PRESET_BROWSER;
                         break;
-                    case 2: // LOAD PRESET
+                    case 3: // LOAD PRESET
                         ensurePresetsDir();
                         presetBrowser.open(PRESETS_DIR, false);
                         mode = AppMode::PRESET_BROWSER;
                         break;
-                    case 3: // EXPORT .PDVIZ
+                    case 4: // EXPORT .PDVIZ
                     {
                         ensurePresetsDir();
                         std::string pdvizPath = std::string(PRESETS_DIR) + "/export.pdviz";
                         PdViz::exportFile(pdvizPath, "Pocket VJ Export", layers);
                         break;
                     }
-                    case 4: // PERFORMANCE MODE
+                    case 5: // PERFORMANCE MODE
                         perfMode.init(&layers, &sceneManager, &bpmTap, &pattern, &recorder);
                         mode = AppMode::PERFORMANCE;
                         break;
-                    case 5: // RECORD
+                    case 6: // RECORD
                         if (recorder.isRecording()) {
                             recorder.stopRecording();
                             ensurePresetsDir();
@@ -322,17 +332,17 @@ int main(int argc, char* argv[]) {
                             recorder.startRecording();
                         }
                         break;
-                    case 6: // SCENES
+                    case 7: // SCENES
                         sceneMenuOpen = true;
                         sceneMenuCursor = sceneManager.currentScene();
                         break;
-                    case 7: // SETTINGS
+                    case 8: // SETTINGS
                         // TODO: settings menu
                         break;
-                    case 8: // ABOUT
+                    case 9: // ABOUT
                         // TODO: about screen
                         break;
-                    case 9: // EXIT
+                    case 10: // EXIT
                         running = false;
                         break;
                     default:
@@ -591,6 +601,17 @@ int main(int argc, char* argv[]) {
                     break;
                 }
 
+                case AppMode::MUSIC_BROWSER: {
+                    std::string result = musicBrowser.update(input);
+                    if (!result.empty()) {
+                        if (musicPlayer.load(result)) musicPlayer.play();
+                        mode = AppMode::TRACKER;
+                    } else if (musicBrowser.cancelled()) {
+                        mode = AppMode::TRACKER;
+                    }
+                    break;
+                }
+
                 case AppMode::PERFORMANCE: {
                     bool exitPerf = perfMode.update(input);
                     if (exitPerf) {
@@ -663,6 +684,10 @@ int main(int argc, char* argv[]) {
                 fileBrowser.render(renderer);
                 break;
 
+            case AppMode::MUSIC_BROWSER:
+                musicBrowser.render(renderer);
+                break;
+
             case AppMode::TRACKER:
             default:
                 // Use layer manager for rendering
@@ -680,6 +705,18 @@ int main(int argc, char* argv[]) {
                 );
                 renderer.rect(0, RENDER_H - 10, RENDER_W, 10, {10, 10, 16}, true);
                 renderer.text(2, RENDER_H - 9, statusBuf, Palette::UI_FG);
+
+                // Music status indicator (right side of status bar)
+                if (musicPlayer.isLoaded()) {
+                    std::string mTitle = musicPlayer.currentTitle();
+                    if (mTitle.size() > 12) mTitle = mTitle.substr(0, 9) + "..";
+                    const char* mSym = musicPlayer.isPlaying() ? ">" :
+                                       (musicPlayer.isPaused() ? "||" : "[]");
+                    char mBuf[32];
+                    snprintf(mBuf, sizeof(mBuf), "%s %s", mSym, mTitle.c_str());
+                    int mLen = (int)mTitle.size() + 3;
+                    renderer.text(RENDER_W - mLen * 4 - 4, RENDER_H - 9, mBuf, Palette::CYAN);
+                }
 
                 // Recording indicator
                 if (recorder.isRecording()) {
@@ -733,6 +770,7 @@ int main(int argc, char* argv[]) {
     }
 
     // Cleanup
+    musicPlayer.shutdown();
     audioInput.shutdown();
 
     // Cleanup all heap-allocated nodes from layers

@@ -6,6 +6,12 @@ CXXFLAGS = -std=c++17 -O2 -Wall -Wextra
 LDFLAGS = $(shell sdl2-config --libs)
 INCLUDES = $(shell sdl2-config --cflags) -Isrc
 
+# SDL2_mixer — link when available (ARM target has it; desktop may not)
+SDL2_MIXER_LIBS := $(shell pkg-config --libs SDL2_mixer 2>/dev/null)
+ifneq ($(SDL2_MIXER_LIBS),)
+LDFLAGS  += $(SDL2_MIXER_LIBS)
+endif
+
 SOURCES = \
 	src/main.cpp \
 	src/input.cpp \
@@ -56,7 +62,9 @@ SOURCES = \
 	src/ui/node_browser.cpp \
 	src/ui/layer_editor.cpp \
 	src/ui/file_browser.cpp \
+	src/ui/music_browser.cpp \
 	src/ui/performance.cpp \
+	src/audio/music_player.cpp \
 	src/engine/scene.cpp \
 	src/engine/bpm.cpp \
 	src/engine/recorder.cpp \
